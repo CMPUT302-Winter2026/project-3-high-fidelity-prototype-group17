@@ -13,6 +13,7 @@ import {
   Label,
   NativeTabs,
 } from "expo-router/unstable-native-tabs";
+import { DynamicColorIOS } from "react-native";
 
 export default function RootLayout() {
   return (
@@ -24,7 +25,20 @@ export default function RootLayout() {
       }}
     >
       <GestureHandlerRootView>
-        {/* <NativeTabs minimizeBehavior="onScrollDown"> */}
+        {/* <NativeTabs minimizeBehavior="onScrollDown"
+        labelStyle={{
+        // For the text color
+        color: DynamicColorIOS({
+          dark: 'white',
+          light: 'black',
+        }),
+      }}
+      // For the selected icon color
+      tintColor={DynamicColorIOS({
+        dark: 'white',
+        light: 'black',
+      })}
+        > */}
         <BlankStack>
           <BlankStack.Screen
             name="linear"
