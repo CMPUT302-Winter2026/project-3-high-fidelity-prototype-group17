@@ -3,7 +3,13 @@ import { router } from "expo-router";
 import { PressableScale } from "pressto";
 import { Pressable, Text, View } from "react-native";
 
-export const Header = () => {
+export const Header = ({
+  header = "",
+  backIcon = "",
+}: {
+  header?: string;
+  backIcon?: string;
+}) => {
   return (
     <View
       style={{
@@ -13,20 +19,29 @@ export const Header = () => {
         width: "100%",
       }}
     >
-      <Text style={{ fontSize: 20, fontWeight: "600" }}>Header</Text>
-      <PressableScale
-        onPress={router.back}
+      <Text
         style={{
-          width: 30,
-          height: 30,
-          borderRadius: 50,
-          backgroundColor: "#404040",
-          alignItems: "center",
-          justifyContent: "center",
+          fontSize: 24,
+          fontWeight: "600",
         }}
       >
-        <FontAwesome name="xmark" size={18} color="#FFF" />
-      </PressableScale>
+        {header}
+      </Text>
+      {backIcon.length > 0 && (
+        <PressableScale
+          onPress={router.back}
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 50,
+            backgroundColor: "#404040",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <FontAwesome name="xmark" size={18} color="#FFF" />
+        </PressableScale>
+      )}
     </View>
   );
 };
