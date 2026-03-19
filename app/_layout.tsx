@@ -7,6 +7,12 @@ import Transition from "react-native-screen-transitions";
 import { Stack } from "@/layouts/stack";
 import { BlankStack } from "@/layouts/blank-stack";
 import "../global.css";
+import {
+  Badge,
+  Icon,
+  Label,
+  NativeTabs,
+} from "expo-router/unstable-native-tabs";
 
 export default function RootLayout() {
   return (
@@ -18,6 +24,7 @@ export default function RootLayout() {
       }}
     >
       <GestureHandlerRootView>
+        {/* <NativeTabs minimizeBehavior="onScrollDown"> */}
         <BlankStack>
           <BlankStack.Screen
             name="linear"
@@ -467,6 +474,22 @@ export default function RootLayout() {
             }}
           />
         </BlankStack>
+
+        {/* <NativeTabs.Trigger name="index">
+            <Label>Explore</Label>
+            <Icon sf="house.fill" drawable="ic_menu_location" />
+          </NativeTabs.Trigger>
+
+          <NativeTabs.Trigger name="presets">
+            <Badge>9+</Badge>
+            <Label>Collection</Label>
+            <Icon sf="gear" drawable="ic_menu_location" />
+          </NativeTabs.Trigger>
+
+          <NativeTabs.Trigger name="search" role="search">
+            <Label>Search</Label>
+          </NativeTabs.Trigger>
+        </NativeTabs> */}
       </GestureHandlerRootView>
     </PressablesConfig>
   );
