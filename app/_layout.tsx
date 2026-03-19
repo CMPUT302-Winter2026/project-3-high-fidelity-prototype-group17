@@ -6,6 +6,7 @@ import { Easing, interpolate, interpolateColor } from "react-native-reanimated";
 import Transition from "react-native-screen-transitions";
 import { Stack } from "@/layouts/stack";
 import { BlankStack } from "@/layouts/blank-stack";
+import "../global.css";
 
 export default function RootLayout() {
   return (

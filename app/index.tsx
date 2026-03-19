@@ -204,6 +204,7 @@ export default function Home() {
                       title="Simple Tray routes"
                       description="Simple tray routes"
                     />
+                    <View className="bg-red-500 w-9 h-9" />
                     <View style={{ gap: 24, marginTop: 24 }}>
                       <PressableScale
                         onPress={() => router.navigate("/linear")}
