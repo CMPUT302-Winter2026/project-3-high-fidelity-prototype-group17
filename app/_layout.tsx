@@ -154,7 +154,61 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="teacher"
-            options={{ title: "Zoom In", ...Transition.Presets.ZoomIn() }}
+            options={{
+              title: "Teacher screen",
+              // ...Transition.Presets.DraggableCard(),
+              enableTransitions: true,
+              gestureEnabled: true,
+              gestureDirection: ["horizontal", "vertical"],
+              screenStyleInterpolator: ({
+                current,
+                progress,
+                layouts: { screen },
+              }) => {
+                "worklet";
+
+                /** Combined */
+                const scale = interpolate(progress, [0, 1, 2], [0, 1, 0.75]);
+
+                /** Vertical */
+                const translateY = interpolate(
+                  current.gesture.normalizedY,
+                  [-1, 1],
+                  [-screen.height * 0.5, screen.height * 0.5],
+                  "clamp",
+                );
+
+                /** Horizontal */
+                const translateX = interpolate(
+                  current.gesture.normalizedX,
+                  [-1, 1],
+                  [-screen.width * 0.5, screen.width * 0.5],
+                  "clamp",
+                );
+
+                const borderRadius = interpolate(
+                  progress,
+                  [0, 1, 2],
+                  [48, 36, 48],
+                );
+
+                return {
+                  contentStyle: {
+                    borderRadius,
+                    overflow: "hidden",
+                    transform: [
+                      { scale },
+                      { translateY: translateY },
+                      { translateX },
+                    ],
+                  },
+                };
+              },
+              transitionSpec: {
+                open: Transition.Specs.DefaultSpec,
+                close: Transition.Specs.DefaultSpec,
+              },
+            }}
           />
         </BlankStack>
       </GestureHandlerRootView>

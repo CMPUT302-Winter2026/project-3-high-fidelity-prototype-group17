@@ -1,6 +1,3 @@
-import { interpolate } from "react-native-reanimated";
-import Transition from "react-native-screen-transitions";
-import { Stack } from "@/layouts/stack";
 import { DynamicColorIOS } from "react-native";
 import {
   Badge,
