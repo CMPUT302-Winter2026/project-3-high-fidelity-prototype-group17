@@ -1,12 +1,16 @@
 import { Button, Divider, Host, Menu, Toggle } from "@expo/ui/swift-ui";
 import {
   buttonStyle,
+  clipShape,
+  controlSize,
   fixedSize,
   font,
   foregroundStyle,
   frame,
   glassEffect,
   labelStyle,
+  padding,
+  tint,
 } from "@expo/ui/swift-ui/modifiers";
 import FontAwesome from "@expo/vector-icons/FontAwesome6";
 import { router } from "expo-router";
@@ -58,23 +62,16 @@ export const Header = ({
 
         <Host matchContents>
           <Menu
-            modifiers={[
-              labelStyle("iconOnly"),
-              buttonStyle("plain"),
-              foregroundStyle("#85ffff"),
-              font({ size: 24 }),
-              frame({ width: 44, height: 44 }),
-              fixedSize({ horizontal: true, vertical: true }),
-              glassEffect({
-                glass: {
-                  variant: "clear",
-                  interactive: true,
-                  tint: "#0287fd",
-                },
-                shape: "ellipse",
-              }),
-            ]}
             label="Options"
+            modifiers={[
+              padding({ trailing: -10 }),
+
+              buttonStyle("borderedProminent"),
+              controlSize("large"),
+
+              // tint("black"),
+              foregroundStyle("white"),
+            ]}
             systemImage="ellipsis"
           >
             <Button label="Edit" onPress={() => console.log("Edit")} />

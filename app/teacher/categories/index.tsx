@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import { memo } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import Transition from "react-native-screen-transitions";
@@ -117,16 +117,29 @@ const Images = memo(() => {
 
 export default function StyleId() {
   return (
-    <Page
-      title="Categories"
-      description="Select a category to explore its word graph!"
-      backIcon="on"
-      contentContainerStyle={{
-        paddingBottom: 150,
-        paddingTop: 56,
-      }}
-    >
-      <Images />
-    </Page>
+    <>
+      <Stack.Screen
+        options={{
+          title: "",
+          headerShown: true,
+          headerTransparent: true,
+          headerTintColor: "white",
+          headerLargeStyle: { backgroundColor: "transparent" },
+          headerBlurEffect: "dark",
+        }}
+      />
+
+      <Page
+        title="Categories"
+        description="Select a category to explore its word graph!"
+        backIcon="on"
+        contentContainerStyle={{
+          paddingBottom: 150,
+          paddingTop: 56,
+        }}
+      >
+        <Images />
+      </Page>
+    </>
   );
 }

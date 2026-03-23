@@ -1,10 +1,5 @@
 import { DynamicColorIOS } from "react-native";
-import {
-  Badge,
-  Icon,
-  Label,
-  NativeTabs,
-} from "expo-router/unstable-native-tabs";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 export default function PresetsLayout() {
   return (
