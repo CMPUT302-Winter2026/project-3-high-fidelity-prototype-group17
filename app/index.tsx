@@ -1,8 +1,31 @@
 import { router, type Href } from "expo-router";
-import { View } from "react-native";
+import { View, Text as RnText } from "react-native";
 import Page from "@/components/page";
 import { PressableScale } from "pressto";
-
+import { GlassView } from "expo-glass-effect";
+import {
+  Host,
+  ZStack,
+  HStack,
+  Button,
+  Menu,
+  Toggle,
+  Divider,
+  Spacer,
+  Rectangle,
+  Text,
+  Circle,
+} from "@expo/ui/swift-ui";
+import {
+  buttonStyle,
+  fixedSize,
+  font,
+  foregroundStyle,
+  frame,
+  glassEffect,
+  labelStyle,
+} from "@expo/ui/swift-ui/modifiers";
+import { Image } from "expo-image";
 type PageType = {
   title: string;
   description: string;

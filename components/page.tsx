@@ -52,11 +52,7 @@ function PageComponent({
         horizontal={horizontal}
         testID={testID}
       >
-        <View style={styles.header}>
-          <Header backIcon={backIcon} header={title} />
-
-          <Text style={styles.description}>{description}</Text>
-        </View>
+        <Header backIcon={backIcon} header={title} description={description} />
         {children}
       </Transition.ScrollView>
     </Fragment>
@@ -92,15 +88,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     gap: 36,
-  },
-  header: {
-    gap: 2,
-  },
-
-  description: {
-    fontSize: 14,
-    color: "gray",
-    fontWeight: "500",
   },
 
   titleSmall: {

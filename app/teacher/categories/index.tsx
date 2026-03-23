@@ -5,6 +5,7 @@ import { FlatList } from "react-native-gesture-handler";
 import Transition from "react-native-screen-transitions";
 import Page from "@/components/page";
 import { useStyleIdStore } from "./_layout";
+import LiquidCategoryCard from "@/components/liquid-category-card";
 
 const Images = memo(() => {
   const data = [
@@ -42,6 +43,30 @@ const Images = memo(() => {
       placeholder:
         "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
     },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
   ];
 
   return (
@@ -50,9 +75,13 @@ const Images = memo(() => {
       keyExtractor={(_, idx) => String(idx)}
       numColumns={2}
       columnWrapperStyle={{ gap: 12 }}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "transparent" }}
       scrollEnabled={false}
-      contentContainerStyle={{ paddingVertical: 12, gap: 12 }}
+      contentContainerStyle={{
+        paddingVertical: 12,
+        gap: 12,
+        backgroundColor: "transparent",
+      }}
       renderItem={({ item }) => {
         const id = `shared-image-${item.id}`;
         return (
@@ -62,9 +91,9 @@ const Images = memo(() => {
             style={{
               flex: 1,
               aspectRatio: 1,
-              borderRadius: 24,
-              overflow: "hidden",
-              backgroundColor: "#eee",
+              // borderRadius: 24,
+              // overflow: "visible",
+              // backgroundColor: "#eee",
             }}
             onPress={() => {
               useStyleIdStore.setState({ boundTag: id });
@@ -78,14 +107,7 @@ const Images = memo(() => {
               });
             }}
           >
-            <Image
-              source={item.source}
-              placeholder={
-                item.placeholder ? { blurhash: item.placeholder } : undefined
-              }
-              style={{ width: "100%", height: "100%" }}
-              contentFit="cover"
-            />
+            <LiquidCategoryCard numImages={5} />
           </Transition.Pressable>
         );
       }}
@@ -96,8 +118,8 @@ const Images = memo(() => {
 export default function StyleId() {
   return (
     <Page
-      title="categories  screen"
-      description="Some stuff about this screen"
+      title="Categories"
+      description="Select a category to explore its word graph!"
       backIcon="on"
       contentContainerStyle={{
         paddingBottom: 150,
