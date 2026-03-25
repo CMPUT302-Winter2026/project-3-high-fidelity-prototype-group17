@@ -1,3 +1,4 @@
+import SkiaGraph from "@/components/skia-graph";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { Image } from "expo-image";
@@ -20,109 +21,11 @@ function DragHandle() {
         width: "100%",
         alignItems: "center",
         paddingVertical: 12,
-        backgroundColor: "white",
-        paddingTop: top,
+        backgroundColor: "#fff",
+        paddingTop: 40,
       }}
     >
       <View style={styles.dragHandle} />
-    </View>
-  );
-}
-
-function ProductHeader() {
-  return (
-    <View style={styles.productHeader}>
-      <View style={styles.companyInfo}>
-        <View style={styles.companyLogo} />
-        <View>
-          <Text style={styles.companyName}>Company name</Text>
-          <Text style={styles.companyMeta}>Misc</Text>
-        </View>
-      </View>
-      <FontAwesome6 name="ellipsis" size={24} color="black" />
-    </View>
-  );
-}
-
-function Rating() {
-  return (
-    <View style={styles.ratingRow}>
-      <View style={styles.ratingStars}>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <AntDesign
-            key={index.toString()}
-            name="star"
-            size={12}
-            color="black"
-          />
-        ))}
-      </View>
-      <Text style={styles.ratingCount}>3 ratings</Text>
-    </View>
-  );
-}
-
-function PriceRow() {
-  return (
-    <>
-      <Text style={styles.priceText}>${PRICE}</Text>
-      <View style={styles.savingsRow}>
-        <View style={styles.savingsPill}>
-          <Text style={styles.savingsPillText}>Save ${SAVE_AMOUNT}</Text>
-        </View>
-        <Text style={styles.savingsMeta}>On orders over ${SAVE_THRESHOLD}</Text>
-      </View>
-    </>
-  );
-}
-
-function PurchaseButtons() {
-  return (
-    <View style={styles.purchaseRow}>
-      <PressableScale
-        style={styles.primaryButton}
-        onPress={() => router.navigate("/linear")}
-      >
-        <Text style={styles.primaryButtonText}>Buy now</Text>
-      </PressableScale>
-      <PressableScale
-        style={styles.secondaryButton}
-        onPress={() => router.navigate("/swerving")}
-      >
-        <Text style={styles.secondaryButtonText}>Buy now</Text>
-      </PressableScale>
-    </View>
-  );
-}
-
-function Description() {
-  return (
-    <View>
-      <Text style={styles.descriptionTitle}>Description</Text>
-      <Text style={styles.descriptionText}>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus,
-        aspernatur! Quibusdam, accusamus. Dignissimos cumque, velit saepe
-        adipisci quod eaque, voluptate voluptates beatae, nihil dolorum impedit
-        explicabo veritatis.
-      </Text>
-      <Text style={styles.descriptionText}>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus,
-        aspernatur! Quibusdam, accusamus. Dignissimos cumque, velit saepe
-        adipisci quod eaque, voluptate voluptates beatae, nihil dolorum impedit
-        explicabo veritatis.
-      </Text>
-      <Text style={styles.descriptionText}>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus,
-        aspernatur! Quibusdam, accusamus. Dignissimos cumque, velit saepe
-        adipisci quod eaque, voluptate voluptates beatae, nihil dolorum impedit
-        explicabo veritatis.
-      </Text>
-      <Text style={styles.descriptionText}>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus,
-        aspernatur! Quibusdam, accusamus. Dignissimos cumque, velit saepe
-        adipisci quod eaque, voluptate voluptates beatae, nihil dolorum impedit
-        explicabo veritatis.
-      </Text>
     </View>
   );
 }
@@ -180,8 +83,8 @@ export default function ImageDetail() {
           style={[styles.scroll, { backgroundColor: "white" }]}
         >
           <DragHandle />
-          <ProductHeader />
-          <SharedImage
+
+          {/* <SharedImage
             id={id}
             image={image}
             placeholder={placeholder}
@@ -203,7 +106,8 @@ export default function ImageDetail() {
               <PurchaseButtons />
             </View>
             <Description />
-          </View>
+          </View> */}
+          <SkiaGraph />
         </Transition.ScrollView>
       </Transition.View>
     </MaskedView>

@@ -26,6 +26,7 @@ import {
   labelStyle,
 } from "@expo/ui/swift-ui/modifiers";
 import { Image } from "expo-image";
+import SkiaGraph from "@/components/skia-graph";
 type PageType = {
   title: string;
   description: string;
@@ -63,6 +64,7 @@ export default function Home() {
           <View className=" w-full h-48 bg-red-500 rounded-3xl"></View>
         </PressableScale>
       ))}
+      <SkiaGraph />
     </Page>
   );
 }
