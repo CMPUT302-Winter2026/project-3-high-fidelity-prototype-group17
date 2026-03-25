@@ -230,26 +230,6 @@ export default function SkiaGraph() {
     [edges],
   );
 
-  // ── Label helpers ──────────────────────────────────────────────────────────
-
-  const getLabelX = useCallback((node: LayoutNode) => {
-    // if no font ie no text being displayed so just send nodes middle point
-    if (!font) return node.x + node.width / 2;
-    const w = font.measureText(node.label).width;
-    if (node.isRoot) return node.x + node.width / 2 - w / 2 - w / 3;
-    // else find nodes middle - text middle to help place text in the middle of the node
-    return node.x + node.width / 2 - w / 2;
-  }, []);
-
-  const getLabelY = useCallback((node: LayoutNode) => {
-    // if no font ie no text being displayed so just send nodes y middle point
-    if (!font) return node.y + node.height / 2;
-    const h = font.measureText(node.label).height;
-    if (node.isRoot) return node.y + node.height / 2 + h / 2 - 0;
-    // else find nodes middle - text middle to help place text in the middle of the node
-    return node.y + node.height / 2 + h / 2 - 3;
-  }, []);
-
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
@@ -275,33 +255,60 @@ export default function SkiaGraph() {
           {nodes.map((node) => {
             const fill = depthColor(node.depth, DEPTH_COLORS);
             const stroke = depthColor(node.depth, DEPTH_STROKES);
+
+            // 1. Pick the correct font for this node
+            const currentFont = node.isRoot ? rootFont : font;
+
+            // 2. Measure the actual text size (fallback to 0 if font isn't loaded yet)
+            const textWidth = currentFont
+              ? currentFont.measureText(node.label).width
+              : 0;
+            const textHeight = currentFont
+              ? currentFont.measureText(node.label).height
+              : 0;
+
+            // 4. The actual box size should be whichever is bigger: the hardcoded layout size OR the text + padding
+            const boxWidth = Math.max(node.width, textWidth);
+            const boxHeight = Math.max(node.height, textHeight);
+
+            // 5. Find the center point of the layout engine's intended position
+            const centerX = node.isRoot
+              ? node.x + node.width / 2 + textHeight
+              : node.x + node.width / 2;
+            const centerY = node.y + node.height / 2;
+
+            // 6. Shift the new dynamic box so it stays perfectly centered over the edge lines
+            const boxX = centerX - boxWidth / 2;
+            const boxY = centerY - boxHeight / 2;
+
             return (
               <Group key={node.id}>
                 <RoundedRect
-                  x={node.x}
-                  y={node.y}
-                  width={node.width}
-                  height={node.height}
+                  x={boxX}
+                  y={boxY}
+                  width={boxWidth}
+                  height={boxHeight}
                   r={RADIUS}
-                  color={"#fff"}
+                  color="#fff"
+                  // color={fill}
                   style="fill"
                 />
                 {/* <RoundedRect
-                  x={node.x}
-                  y={node.y}
-                  width={node.width}
-                  height={node.height}
+                  x={boxX}
+                  y={boxY}
+                  width={boxWidth}
+                  height={boxHeight}
                   r={RADIUS}
                   color={stroke}
                   strokeWidth={1.5}
                   style="stroke"
                 /> */}
-                {font && (
+                {currentFont && (
                   <Text
-                    x={getLabelX(node)}
-                    y={getLabelY(node)}
+                    x={centerX - textWidth / 2}
+                    y={centerY + textHeight / 2 - 3}
                     text={node.label}
-                    font={node.isRoot ? rootFont : font}
+                    font={currentFont}
                     color={LABEL_COLOR}
                   />
                 )}
