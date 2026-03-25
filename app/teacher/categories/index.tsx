@@ -1,11 +1,10 @@
-import { Image } from "expo-image";
-import { router, Stack } from "expo-router";
+import { Link, router } from "expo-router";
 import { memo } from "react";
 import { FlatList } from "react-native-gesture-handler";
-import Transition from "react-native-screen-transitions";
-import Page from "@/components/page";
-import { useStyleIdStore } from "./_layout";
+
 import LiquidCategoryCard from "@/components/liquid-category-card";
+import { PressableScale } from "pressto";
+import Page from "@/components/page";
 
 const Images = memo(() => {
   const data = [
@@ -76,17 +75,17 @@ const Images = memo(() => {
       numColumns={2}
       columnWrapperStyle={{ gap: 12 }}
       style={{ flex: 1, backgroundColor: "transparent" }}
-      scrollEnabled={false}
+      scrollEnabled={true}
       contentContainerStyle={{
         paddingVertical: 12,
+        paddingHorizontal: 12,
         gap: 12,
         backgroundColor: "transparent",
       }}
       renderItem={({ item }) => {
         const id = `shared-image-${item.id}`;
         return (
-          <Transition.Pressable
-            sharedBoundTag={id}
+          <PressableScale
             onLongPress={() => router.navigate("/examples/delete-warning")}
             style={{
               flex: 1,
@@ -96,7 +95,6 @@ const Images = memo(() => {
               // backgroundColor: "#eee",
             }}
             onPress={() => {
-              useStyleIdStore.setState({ boundTag: id });
               router.push({
                 pathname: "/teacher/categories/[id]",
                 params: {
@@ -108,7 +106,7 @@ const Images = memo(() => {
             }}
           >
             <LiquidCategoryCard numImages={5} />
-          </Transition.Pressable>
+          </PressableScale>
         );
       }}
     />
@@ -116,30 +114,5 @@ const Images = memo(() => {
 });
 
 export default function StyleId() {
-  return (
-    <>
-      <Stack.Screen
-        options={{
-          title: "",
-          headerShown: true,
-          headerTransparent: true,
-          headerTintColor: "white",
-          headerLargeStyle: { backgroundColor: "transparent" },
-          headerBlurEffect: "dark",
-        }}
-      />
-
-      <Page
-        title="Categories"
-        description="Select a category to explore its word graph!"
-        backIcon="on"
-        contentContainerStyle={{
-          paddingBottom: 150,
-          paddingTop: 56,
-        }}
-      >
-        <Images />
-      </Page>
-    </>
-  );
+  return <Images />;
 }

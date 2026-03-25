@@ -1,4 +1,4 @@
-import { router, type Href } from "expo-router";
+import { Link, router, type Href } from "expo-router";
 import { View, Text as RnText } from "react-native";
 import Page from "@/components/page";
 import { PressableScale } from "pressto";
@@ -60,11 +60,12 @@ export default function Home() {
       testID="HOME_PAGE"
     >
       {screenTransitions.map((e, i) => (
-        <PressableScale key={i} onPress={() => router.navigate(e.href)}>
-          <View className=" w-full h-48 bg-red-500 rounded-3xl"></View>
-        </PressableScale>
+        <Link href={e.href} asChild key={i}>
+          <PressableScale>
+            <View className=" w-full h-48 bg-red-500 rounded-3xl"></View>
+          </PressableScale>
+        </Link>
       ))}
-      <SkiaGraph />
     </Page>
   );
 }

@@ -51,7 +51,7 @@ const Images = memo(() => {
       numColumns={2}
       columnWrapperStyle={{ gap: 12 }}
       style={{ flex: 1 }}
-      scrollEnabled={false}
+      scrollEnabled={true}
       contentContainerStyle={{ paddingVertical: 12, gap: 12 }}
       renderItem={({ item }) => {
         const id = `shared-image-${item.id}`;
@@ -94,17 +94,5 @@ const Images = memo(() => {
 });
 
 export default function StyleId() {
-  return (
-    <Page
-      title="collections screen"
-      description="Some stuff about this screen"
-      backIcon="on"
-      contentContainerStyle={{
-        paddingBottom: 150,
-        paddingTop: 56,
-      }}
-    >
-      <Images />
-    </Page>
-  );
+  return <Images />;
 }
