@@ -1,7 +1,6 @@
-import { DynamicColorIOS, View } from "react-native";
+import { DynamicColorIOS } from "react-native";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import { useCallback, useEffect } from "react";
-import { useFocusEffect } from "expo-router";
+import { useEffect } from "react";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -12,18 +11,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function PresetsLayout() {
   const insets = useSafeAreaInsets();
   const paddingTop = useSharedValue(insets.top);
-  const fixAnimation = useCallback(() => {
-    paddingTop.set(insets.top);
-    const timer = setTimeout(() => {
-      paddingTop.set(0);
-    }, 400);
 
-    return () => clearTimeout(timer);
-  }, [insets.top, paddingTop]);
+  useEffect(() => {
+    paddingTop.value = withTiming(0, { duration: 400 });
+  }, []);
 
-  useFocusEffect(fixAnimation);
   const animatedStyle = useAnimatedStyle(() => ({
-    paddingTop: paddingTop.get(),
+    paddingTop: paddingTop.value,
   }));
 
   return (
