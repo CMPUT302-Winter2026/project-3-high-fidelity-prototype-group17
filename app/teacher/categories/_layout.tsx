@@ -1,12 +1,17 @@
+import { useAnimationStore } from "@/store/global";
+import { SPRING_CONFIG } from "@/utils/constants";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { router, Stack } from "expo-router";
 import { useColorScheme, View } from "react-native";
 import { LogBox } from "react-native";
+import { withSpring } from "react-native-reanimated";
+import * as Haptics from "expo-haptics";
 
 LogBox.ignoreLogs([
   "The screen '[id]' was removed natively but didn't get removed from JS state",
 ]);
 export default function StyleIdLayout() {
+  const { showMiniMapProg } = useAnimationStore();
   const rawTheme = useColorScheme();
   const theme = rawTheme === "dark" ? "dark" : "light";
   const isGlassAvailable = isLiquidGlassAvailable();
@@ -214,11 +219,28 @@ export default function StyleIdLayout() {
         options={{
           headerLargeTitle: false,
           headerTransparent: true,
-          headerBackButtonMenuEnabled: false,
+          headerBackButtonMenuEnabled: true,
           headerTintColor: theme === "dark" ? "white" : "black",
           headerLargeStyle: { backgroundColor: "transparent" },
           headerBlurEffect: isGlassAvailable ? undefined : blurEffect,
           title: "",
+          unstable_headerRightItems: (props) => [
+            {
+              type: "button",
+              label: "Show Map",
+              // icon: {
+              //   name: "map",
+              //   type: "sfSymbol",
+              // },
+              variant: "prominent",
+              onPress: () => {
+                Haptics.selectionAsync();
+                const newValue = showMiniMapProg.value === 0 ? 1 : 0;
+                showMiniMapProg.value = withSpring(newValue, SPRING_CONFIG);
+              },
+              accessibilityLabel: "Search items",
+            },
+          ],
         }}
       />
     </Stack>

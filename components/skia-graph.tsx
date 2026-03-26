@@ -1,62 +1,37 @@
-import React, { useCallback, useMemo } from "react";
-import { Dimensions, Platform, StyleSheet } from "react-native";
+import React, { useMemo, useRef } from "react";
+import { Dimensions, StyleSheet } from "react-native";
 import {
   Canvas,
-  Circle,
   Group,
-  Paint,
   Path,
   RoundedRect,
   Skia,
-  Text,
-  matchFont,
-  vec,
 } from "@shopify/react-native-skia";
 import {
+  cancelAnimation,
   clamp,
   useDerivedValue,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { buildForestLayout } from "@/utils/radial-layout.engine";
 import { RAW_NODES, ROOT_IDS } from "@/utils/data";
-import { LayoutNode } from "@/utils/types";
+import { MiniMap } from "./dynamic-island-map";
+import { SPRING_CONFIG } from "@/utils/constants";
+import { useAnimationStore } from "@/store/global";
+import SkiaGraphNode from "./skia-graph-nodes";
+import { hapticWithSequence } from "@/utils/haptics-with-seq";
+import { runOnJS } from "react-native-worklets";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router } from "expo-router";
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 2;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-// ── Font ──────────────────────────────────────────────────────────────────────
-
-const font = matchFont({
-  fontFamily: Platform.select({ ios: "Helvetica", default: "serif" }),
-  fontSize: 20,
-  fontWeight: "600",
-});
-
-const rootFont = matchFont({
-  fontFamily: Platform.select({ ios: "Helvetica", default: "serif" }),
-  fontSize: 30,
-  fontWeight: "600",
-});
-
-const DEPTH_COLORS = [
-  "#7F77DD", // depth 0 — root
-  "#1D9E75", // depth 1
-  "#D85A30", // depth 2
-  "#378ADD", // depth 3+
-];
-
-const DEPTH_STROKES = ["#534AB7", "#0F6E56", "#993C1D", "#185FA5"];
-
 const BG_COLOR = "#FFF";
-const LABEL_COLOR = "#000";
 const EDGE_COLOR = "#88878055";
-const RADIUS = 34;
-
-function depthColor(depth: number, strokes: string[]) {
-  return strokes[Math.min(depth, strokes.length - 1)];
-}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -65,13 +40,15 @@ export default function SkiaGraph() {
     () => buildForestLayout(RAW_NODES, ROOT_IDS),
     [],
   );
-
+  const { top } = useSafeAreaInsets();
   // Initial pan: put the root (at 0,0 in layout space) in the screen centre
   const translateX = useSharedValue(SCREEN_WIDTH / 2);
   const translateY = useSharedValue(SCREEN_HEIGHT / 2);
   const lastX = useSharedValue(SCREEN_WIDTH / 2);
   const lastY = useSharedValue(SCREEN_HEIGHT / 2);
   const scale = useSharedValue(1);
+  const { showMiniMapProg } = useAnimationStore();
+
   const startScale = useSharedValue(0);
 
   // 1. Calculate static bounds once and pass to a shared value
@@ -128,6 +105,8 @@ export default function SkiaGraph() {
 
   const panGesture = Gesture.Pan()
     .onStart(() => {
+      // panEnd.set(withSpring(0, SPRING_CONFIG));
+
       lastX.value = translateX.value;
       lastY.value = translateY.value;
     })
@@ -150,7 +129,6 @@ export default function SkiaGraph() {
       );
     })
     .onEnd((e) => {
-      // Add velocity decay but clamp the final spring destination so it doesn't bounce out of bounds
       const s = scale.value;
       const b = bounds.value;
 
@@ -167,8 +145,128 @@ export default function SkiaGraph() {
         SCREEN_HEIGHT,
       );
 
-      translateX.value = withSpring(targetX);
-      translateY.value = withSpring(targetY);
+      translateX.value = withSpring(targetX, SPRING_CONFIG);
+      translateY.value = withSpring(targetY, SPRING_CONFIG);
+    })
+    .onFinalize(() => {
+      // panEnd.set(withSpring(1, SPRING_CONFIG));
+    });
+
+  const longTapProgress = useSharedValue(0);
+  const progress = useSharedValue(0.0);
+  const MIN_DURATION = 1000;
+
+  const sequenceIdRef = useRef(0);
+
+  const startHaptics = () => {
+    sequenceIdRef.current += 1;
+    const myUniqueId = sequenceIdRef.current;
+
+    hapticWithSequence(
+      [
+        ".",
+        50,
+        ":",
+        50,
+        "o",
+        "-",
+        ".",
+        50,
+        ":",
+        50,
+        "o",
+        "-",
+        ".",
+        50,
+        ":",
+        50,
+        "o",
+        "-",
+      ],
+      () => sequenceIdRef.current !== myUniqueId,
+    );
+  };
+
+  const successHaptics = () => {
+    sequenceIdRef.current += 1;
+    hapticWithSequence(["O", "O"]);
+  };
+
+  const stopHaptics = () => {
+    sequenceIdRef.current += 1;
+  };
+
+  useDerivedValue(() => {
+    if (longTapProgress.value > 0 && longTapProgress.value < 100) {
+      console.log(`Progress: ${Math.round(longTapProgress.value)}%`);
+    }
+  });
+
+  const isNodePressed = useSharedValue(false);
+
+  const longpressedNode = useSharedValue("");
+  const handleSuccessNav = () => {
+    router.navigate("/linear");
+
+    setTimeout(() => {
+      progress.value = 0;
+      longpressedNode.value = "";
+    }, 500);
+  };
+  const longTapGesture = Gesture.LongPress()
+    .minDuration(MIN_DURATION)
+    .onBegin((e) => {
+      // Convert the physical screen touch into Canvas/Graph coordinates
+      const graphX = (e.x - translateX.value) / scale.value;
+      const graphY = (e.y - translateY.value) / scale.value;
+
+      let hitNode = null;
+
+      for (let i = 0; i < nodes.length; i++) {
+        const n = nodes[i];
+        const hitPadding = 30;
+
+        if (
+          graphX >= n.x - hitPadding &&
+          graphX <= n.x + n.width + hitPadding &&
+          graphY >= n.y - hitPadding &&
+          graphY <= n.y + n.height + hitPadding
+        ) {
+          hitNode = n;
+          break;
+        }
+      }
+
+      //successfully hit a node!
+      if (hitNode) {
+        isNodePressed.value = true;
+
+        longpressedNode.set(hitNode.id);
+
+        progress.value = withTiming(1, { duration: MIN_DURATION });
+
+        runOnJS(startHaptics)();
+      } else {
+        isNodePressed.value = false;
+      }
+    })
+    .onStart((e) => {
+      if (isNodePressed.value) {
+        runOnJS(successHaptics)();
+      }
+    })
+    .onFinalize((e, success) => {
+      if (isNodePressed.value) {
+        runOnJS(stopHaptics)();
+        if (success) {
+          runOnJS(handleSuccessNav)();
+        } else {
+          // If they let go early, cancel the fill and shrink it back down
+          cancelAnimation(progress);
+          progress.value = withTiming(0, { duration: 200 });
+        }
+      }
+      isNodePressed.value = false;
     });
 
   const pinchGesture = Gesture.Pinch()
@@ -183,12 +281,12 @@ export default function SkiaGraph() {
     .onUpdate((e) => {
       const nextScale = clamp(startScale.value * e.scale, MIN_ZOOM, MAX_ZOOM);
 
-      // Calculate new translations to zoom exactly where the fingers are
+      //new translations to zoom exactly where the fingers are
       const ratio = nextScale / startScale.value;
       const rawNewX = originX.value - (originX.value - lastX.value) * ratio;
       const rawNewY = originY.value - (originY.value - lastY.value) * ratio;
 
-      // Ensure we don't zoom out into white space
+      // don't zoom out into white space
       const b = bounds.value;
 
       scale.value = nextScale;
@@ -230,10 +328,26 @@ export default function SkiaGraph() {
     [edges],
   );
 
+  const contentBounds = useMemo(() => {
+    if (nodes.length === 0) return { minX: 0, minY: 0, width: 0, height: 0 };
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
+    nodes.forEach((node) => {
+      if (node.x < minX) minX = node.x;
+      if (node.y < minY) minY = node.y;
+      if (node.x + node.width > maxX) maxX = node.x + node.width;
+      if (node.y + node.height > maxY) maxY = node.y + node.height;
+    });
+    return { minX, minY, width: maxX - minX, height: maxY - minY };
+  }, [nodes]);
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <GestureDetector gesture={Gesture.Simultaneous(panGesture, pinchGesture)}>
+    <GestureDetector
+      gesture={Gesture.Simultaneous(panGesture, pinchGesture, longTapGesture)}
+    >
       <Canvas style={styles.canvas}>
         {/* Background */}
         <RoundedRect
@@ -252,70 +366,26 @@ export default function SkiaGraph() {
           ))}
 
           {/* Nodes */}
-          {nodes.map((node) => {
-            const fill = depthColor(node.depth, DEPTH_COLORS);
-            const stroke = depthColor(node.depth, DEPTH_STROKES);
-
-            // 1. Pick the correct font for this node
-            const currentFont = node.isRoot ? rootFont : font;
-
-            // 2. Measure the actual text size (fallback to 0 if font isn't loaded yet)
-            const textWidth = currentFont
-              ? currentFont.measureText(node.label).width
-              : 0;
-            const textHeight = currentFont
-              ? currentFont.measureText(node.label).height
-              : 0;
-
-            // 4. The actual box size should be whichever is bigger: the hardcoded layout size OR the text + padding
-            const boxWidth = Math.max(node.width, textWidth);
-            const boxHeight = Math.max(node.height, textHeight);
-
-            // 5. Find the center point of the layout engine's intended position
-            const centerX = node.isRoot
-              ? node.x + node.width / 2 + textHeight
-              : node.x + node.width / 2;
-            const centerY = node.y + node.height / 2;
-
-            // 6. Shift the new dynamic box so it stays perfectly centered over the edge lines
-            const boxX = centerX - boxWidth / 2;
-            const boxY = centerY - boxHeight / 2;
-
+          {nodes.map((node, idx) => {
             return (
-              <Group key={node.id}>
-                <RoundedRect
-                  x={boxX}
-                  y={boxY}
-                  width={boxWidth}
-                  height={boxHeight}
-                  r={RADIUS}
-                  color="#fff"
-                  // color={fill}
-                  style="fill"
-                />
-                {/* <RoundedRect
-                  x={boxX}
-                  y={boxY}
-                  width={boxWidth}
-                  height={boxHeight}
-                  r={RADIUS}
-                  color={stroke}
-                  strokeWidth={1.5}
-                  style="stroke"
-                /> */}
-                {currentFont && (
-                  <Text
-                    x={centerX - textWidth / 2}
-                    y={centerY + textHeight / 2 - 3}
-                    text={node.label}
-                    font={currentFont}
-                    color={LABEL_COLOR}
-                  />
-                )}
-              </Group>
+              <SkiaGraphNode
+                key={idx}
+                node={node}
+                selectedNode={longpressedNode}
+                progress={progress}
+              />
             );
           })}
         </Group>
+        <MiniMap
+          contentBounds={contentBounds}
+          showMiniMapProg={showMiniMapProg}
+          skiaImages={nodes}
+          top={top}
+          scale={scale}
+          translateX={translateX}
+          translateY={translateY}
+        />
       </Canvas>
     </GestureDetector>
   );

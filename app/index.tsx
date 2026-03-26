@@ -1,32 +1,30 @@
-import { Link, router, type Href } from "expo-router";
-import { View, Text as RnText } from "react-native";
+import { Link, type Href } from "expo-router";
+import { Platform, View } from "react-native";
 import Page from "@/components/page";
 import { PressableScale } from "pressto";
-import { GlassView } from "expo-glass-effect";
+
 import {
-  Host,
-  ZStack,
-  HStack,
-  Button,
-  Menu,
-  Toggle,
-  Divider,
-  Spacer,
-  Rectangle,
+  Canvas,
+  Group,
+  Mask,
+  matchFont,
+  Rect,
+  rect,
+  RoundedRect,
+  rrect,
   Text,
-  Circle,
-} from "@expo/ui/swift-ui";
+} from "@shopify/react-native-skia";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import {
-  buttonStyle,
-  fixedSize,
-  font,
-  foregroundStyle,
-  frame,
-  glassEffect,
-  labelStyle,
-} from "@expo/ui/swift-ui/modifiers";
-import { Image } from "expo-image";
-import SkiaGraph from "@/components/skia-graph";
+  cancelAnimation,
+  interpolate,
+  useDerivedValue,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { hapticWithSequence } from "@/utils/haptics-with-seq";
+import { runOnJS } from "react-native-worklets";
+import { useRef } from "react";
 type PageType = {
   title: string;
   description: string;
