@@ -245,7 +245,7 @@ function TrayContent({ style, children }: TrayContentProps) {
   return (
     <Transition.View
       styleId={TRAY_SCALED_CONTENT_ID}
-      style={[{ flex: 1, paddingHorizontal: 24 }, style]}
+      style={[{ flex: 1 }, style]}
       pointerEvents="box-none"
     >
       {children}

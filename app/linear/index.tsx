@@ -1,30 +1,46 @@
 import { router } from "expo-router";
-import { Card } from "@/components/card-2";
 import { Tray } from "@/components/tray";
-import { StyleSheet, Text, View } from "react-native";
-import { PressableScale } from "pressto";
 
+import {
+  Button,
+  Form,
+  Host,
+  HStack,
+  Spacer,
+  Text,
+  Image,
+} from "@expo/ui/swift-ui";
+import {
+  background,
+  buttonStyle,
+  controlSize,
+  foregroundStyle,
+  frame,
+  labelStyle,
+  padding,
+  shapes,
+  tint,
+} from "@expo/ui/swift-ui/modifiers";
+import React from "react";
+import ConjugationSection from "@/components/conjugation-section";
+import WordInfoSection from "@/components/word-info-section";
 export default function Screen() {
   return (
-    <Tray.View snapPoint="50%" backgroundColor="#FFF">
-      <Tray.Header title="Screen A" />
+    <Tray.View snapPoint="70%" backgroundColor="#FFF">
+      <Tray.Header title="Word information" />
       <Tray.Content
-        style={{ justifyContent: "space-between", paddingBottom: 24 }}
+        style={{
+          justifyContent: "space-between",
+          paddingBottom: 24,
+          backgroundColor: "#f1f1f1",
+        }}
       >
-        <View style={{ gap: 4 }}>
-          <Card
-            title="Go to Tray B"
-            description="Take me to Tray B"
-            variant="success"
-            onPress={() => router.push("/linear/b")}
-          />
-          <Card
-            title="Or go back"
-            description="I would rather go back"
-            variant="error"
-            onPress={router.back}
-          />
-        </View>
+        <Host style={{ flex: 1 }}>
+          <Form>
+            <WordInfoSection />
+            <ConjugationSection />
+          </Form>
+        </Host>
         <PurchaseButtons />
       </Tray.Content>
     </Tray.View>
@@ -33,55 +49,52 @@ export default function Screen() {
 
 function PurchaseButtons() {
   return (
-    <View style={styles.purchaseRow}>
-      <PressableScale
-        style={styles.primaryButton}
-        onPress={() => router.navigate("/presets/elastic-card")}
+    <Host matchContents>
+      <HStack
+        modifiers={[
+          frame({ alignment: "center" }),
+          padding({ horizontal: 24 }),
+        ]}
       >
-        <Text style={styles.primaryButtonText}>Create</Text>
-      </PressableScale>
-      <PressableScale
-        style={styles.secondaryButton}
-        onPress={() => router.back}
-      >
-        <Text style={styles.secondaryButtonText}>Cancel</Text>
-      </PressableScale>
-    </View>
+        <Button
+          onPress={() => router.push("/linear/b")}
+          systemImage="plus"
+          modifiers={[
+            labelStyle("titleAndIcon"),
+            buttonStyle("glassProminent"),
+            controlSize("large"),
+            background("", shapes.roundedRectangle({ cornerRadius: 10 })),
+          ]}
+        >
+          <HStack
+            spacing={24}
+            modifiers={[frame({ width: 144, alignment: "center" })]}
+          >
+            <Image systemName="plus" />
+            <Text>Collection</Text>
+          </HStack>
+        </Button>
+        <Spacer />
+        <Button
+          onPress={() => {
+            router.back();
+          }}
+          modifiers={[
+            buttonStyle("glassProminent"),
+            controlSize("large"),
+            tint("black"),
+            foregroundStyle("white"),
+            background(
+              "#f1f1f1",
+              shapes.roundedRectangle({ cornerRadius: 10 }),
+            ),
+          ]}
+        >
+          <Text modifiers={[frame({ width: 144, alignment: "center" })]}>
+            Cancel
+          </Text>
+        </Button>
+      </HStack>
+    </Host>
   );
 }
-
-const styles = StyleSheet.create({
-  primaryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flex: 1,
-    backgroundColor: "black",
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryButtonText: {
-    fontSize: 16,
-    color: "white",
-    fontWeight: "600",
-  },
-  secondaryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    flex: 1,
-    backgroundColor: "#84cc16",
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    color: "white",
-    fontWeight: "600",
-  },
-  purchaseRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-});

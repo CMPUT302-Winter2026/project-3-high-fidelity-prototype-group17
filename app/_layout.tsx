@@ -24,6 +24,7 @@ export default function RootLayout() {
             options={{
               gestureDirection: "vertical",
               gestureEnabled: true,
+              experimental_enableHighRefreshRate: true,
               screenStyleInterpolator: (props) => {
                 "worklet";
                 if (props.focused) {
@@ -60,6 +61,7 @@ export default function RootLayout() {
             options={{
               gestureDirection: "vertical",
               gestureEnabled: true,
+              experimental_enableHighRefreshRate: true,
               screenStyleInterpolator: (props) => {
                 "worklet";
                 if (props.focused) {
@@ -106,6 +108,7 @@ export default function RootLayout() {
               enableTransitions: true,
               gestureEnabled: true,
               gestureDirection: "vertical",
+              experimental_enableHighRefreshRate: true,
               screenStyleInterpolator: ({ current, next, layouts }) => {
                 "worklet";
 
@@ -156,58 +159,8 @@ export default function RootLayout() {
             name="teacher"
             options={{
               title: "Teacher screen",
-              // ...Transition.Presets.DraggableCard(),
-              enableTransitions: true,
-              gestureEnabled: true,
-              gestureDirection: ["horizontal", "vertical"],
-              screenStyleInterpolator: ({
-                current,
-                progress,
-                layouts: { screen },
-              }) => {
-                "worklet";
-
-                /** Combined */
-                const scale = interpolate(progress, [0, 1, 2], [0, 1, 0.75]);
-
-                /** Vertical */
-                const translateY = interpolate(
-                  current.gesture.normalizedY,
-                  [-1, 1],
-                  [-screen.height * 0.5, screen.height * 0.5],
-                  "clamp",
-                );
-
-                /** Horizontal */
-                const translateX = interpolate(
-                  current.gesture.normalizedX,
-                  [-1, 1],
-                  [-screen.width * 0.5, screen.width * 0.5],
-                  "clamp",
-                );
-
-                const borderRadius = interpolate(
-                  progress,
-                  [0, 1, 2],
-                  [48, 36, 48],
-                );
-
-                return {
-                  contentStyle: {
-                    borderRadius,
-                    overflow: "hidden",
-                    transform: [
-                      { scale },
-                      { translateY: translateY },
-                      { translateX },
-                    ],
-                  },
-                };
-              },
-              transitionSpec: {
-                open: Transition.Specs.DefaultSpec,
-                close: Transition.Specs.DefaultSpec,
-              },
+              ...Transition.Presets.SlideFromTop(),
+              experimental_enableHighRefreshRate: true,
             }}
           />
         </BlankStack>
