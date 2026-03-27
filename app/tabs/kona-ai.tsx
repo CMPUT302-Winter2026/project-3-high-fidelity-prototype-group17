@@ -1,6 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, Text } from "react-native";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  FadeInUp,
+  FadeOut,
+  Easing,
+} from "react-native-reanimated";
 import { useSiri } from "@/components/siri-overlay/context";
 import { SiriProvider } from "@/components/siri-overlay";
 import { useFocusEffect } from "expo-router";
@@ -22,83 +27,97 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
   return (
     <Animated.View
       style={styles.overlay}
-      entering={FadeIn.duration(200)}
-      exiting={FadeOut.duration(180)}
+      entering={FadeIn.duration(300)}
+      exiting={FadeOut.duration(200)}
     >
-      <UnstableSiriOrb
-        size={300}
-        speed={1}
-        noiseIntensity={1}
-        glowIntensity={1.4}
-        saturation={2}
-        style={{
-          marginLeft: -Dimensions.get("screen").width / 2 + PADDING,
-          marginTop: -Dimensions.get("screen").height / 2 + 2 * PADDING,
-        }}
-        brightness={1}
-        rotationSpeed={1}
-        noiseScale={3}
-        coreIntensity={0.55}
-        edgeSoftness={0.045}
-        primaryColor={{ r: 0.45, g: 0.65, b: 1.0 }}
-        secondaryColor={{ r: 0.0, g: 0.85, b: 0.8 }}
-      />
+      <Animated.View
+        entering={FadeInUp.duration(500).easing(Easing.out(Easing.exp))}
+      >
+        <UnstableSiriOrb
+          size={300}
+          speed={1}
+          noiseIntensity={1}
+          glowIntensity={1.4}
+          saturation={2}
+          style={{
+            marginLeft: -Dimensions.get("screen").width / 2 + 1.5 * PADDING,
+            marginTop: -Dimensions.get("screen").height / 2 + 6 * PADDING,
+          }}
+          brightness={1}
+          rotationSpeed={1}
+          noiseScale={3}
+          coreIntensity={0.55}
+          edgeSoftness={0.045}
+          primaryColor={{ r: 0.45, g: 0.65, b: 1.0 }}
+          secondaryColor={{ r: 0.0, g: 0.85, b: 0.8 }}
+        />
+      </Animated.View>
 
-      <View>
+      <Animated.View
+        entering={FadeInUp.delay(180)
+          .duration(420)
+          .easing(Easing.out(Easing.quad))}
+      >
         <Text className="text-white text-2xl" style={{ fontFamily: "system" }}>
           Hi XYZ
         </Text>
         <Text className="text-white text-4xl" style={{ fontFamily: "system" }}>
           Where should we start ?
         </Text>
-      </View>
+      </Animated.View>
 
-      <ChromaRing
-        glow="#000000"
-        base="#000000"
-        width={Dimensions.get("screen").width - 56}
-        style={{ top: Dimensions.get("screen").height / 3 }}
-        height={100}
-        borderRadius={26}
+      {/* 3. Input Transition: Rises from bottom with original styles */}
+      <Animated.View
+        entering={FadeInUp.delay(340)
+          .duration(480)
+          .easing(Easing.out(Easing.exp))}
       >
-        <View
-          style={{
-            width: Dimensions.get("screen").width - 60,
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: "#111",
-            paddingHorizontal: 16,
-            borderRadius: 26,
-            height: 96,
-          }}
+        <ChromaRing
+          glow="#000000"
+          base="#000000"
+          width={Dimensions.get("screen").width - 56}
+          style={{ top: Dimensions.get("screen").height / 3.5 }}
+          height={100}
+          borderRadius={26}
         >
-          <SymbolView
-            name={{ ios: "info.circle", android: "info", web: "info" }}
-            tintColor="#fff"
-            size={30}
-            style={{ marginLeft: 12 }}
-          />
           <View
             style={{
-              width: 0.4,
-              backgroundColor: "#6e6e6e",
-              height: 50,
-              marginLeft: 30,
+              width: Dimensions.get("screen").width - 60,
+              flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: "#111",
+              paddingHorizontal: 16,
+              borderRadius: 26,
+              height: 96,
             }}
-          />
-          <AnimatedInputBar
-            placeholders={PLACEHOLDERS}
-            value={text}
-            animationInterval={3000}
-            onChangeText={setText}
-            selectionColor={"#353535"}
-          />
-        </View>
-      </ChromaRing>
+          >
+            <SymbolView
+              name={{ ios: "info.circle", android: "info", web: "info" }}
+              tintColor="#fff"
+              size={30}
+              style={{ marginLeft: 12 }}
+            />
+            <View
+              style={{
+                width: 0.4,
+                backgroundColor: "#6e6e6e",
+                height: 50,
+                marginLeft: 30,
+              }}
+            />
+            <AnimatedInputBar
+              placeholders={PLACEHOLDERS}
+              value={text}
+              animationInterval={3000}
+              onChangeText={setText}
+              selectionColor={"#353535"}
+            />
+          </View>
+        </ChromaRing>
+      </Animated.View>
     </Animated.View>
   );
 };
-
 export default function HomePage() {
   return (
     <SiriProvider>

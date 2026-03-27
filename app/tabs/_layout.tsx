@@ -34,22 +34,31 @@ export default function PresetsLayout() {
         <NativeTabs.Trigger name="categories">
           <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
-            sf="house.fill"
-            drawable="ic_menu_location"
+            sf="square.grid.2x2.fill"
+            drawable="ic_menu_view_as_grid"
           />
         </NativeTabs.Trigger>
+
         <NativeTabs.Trigger name="collections">
           <NativeTabs.Trigger.Badge>9+</NativeTabs.Trigger.Badge>
           <NativeTabs.Trigger.Label>Collection</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon sf="gear" drawable="ic_menu_location" />
+          <NativeTabs.Trigger.Icon
+            sf="rectangle.stack.fill"
+            drawable="ic_menu_archive"
+          />
         </NativeTabs.Trigger>
+
         <NativeTabs.Trigger name="search" role="search">
           <NativeTabs.Trigger.Label>Search</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Icon
+            sf="magnifyingglass"
+            drawable="ic_menu_search"
+          />
         </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="kona-ai">
-          <NativeTabs.Trigger.Label>Collection</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon sf="gear" drawable="ic_menu_location" />
+          <NativeTabs.Trigger.Label>Kona AI</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Icon sf="sparkles" drawable="ic_menu_manage" />
         </NativeTabs.Trigger>
       </NativeTabs>
     </Animated.View>
