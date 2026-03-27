@@ -63,9 +63,13 @@ const TableRow = ({
   </HStack>
 );
 
-export default function ConjugationSection() {
+export default function ConjugationSection({
+  sectionname,
+}: {
+  sectionname?: string;
+}) {
   return (
-    <Section title="Word conjugation ᴬᴱᶜᴰ">
+    <Section title={sectionname || "Word conjugation ᴬᴱᶜᴰ"}>
       {/* Top Header / Picker Row */}
       <Picker
         modifiers={[pickerStyle("segmented")]}

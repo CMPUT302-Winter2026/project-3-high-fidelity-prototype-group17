@@ -31,6 +31,7 @@ import {
 } from "@expo/ui/swift-ui/modifiers";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { Alert } from "react-native";
 
 const CATEGORIES = [
   { id: "1", name: "Animals", count: 10, color: "#3b4b8a" },
@@ -169,7 +170,22 @@ export default function ColectionSection() {
         <Button
           label="Create new"
           onPress={() => {
-            router.push("/linear/c");
+            Alert.prompt(
+              "Create Collection",
+              `Please enter your new collection name!`,
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "OK",
+                  onPress: (username: any) => setName(username),
+                },
+              ],
+              "plain-text",
+              "",
+            );
           }}
           modifiers={[
             labelStyle("titleAndIcon"),

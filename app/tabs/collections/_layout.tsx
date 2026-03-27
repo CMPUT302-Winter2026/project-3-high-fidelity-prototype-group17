@@ -10,6 +10,10 @@ import * as Haptics from "expo-haptics";
 LogBox.ignoreLogs([
   "The screen '[id]' was removed natively but didn't get removed from JS state",
 ]);
+
+LogBox.ignoreLogs([
+  "The screen 'lesson-plan' was removed natively but didn't get removed from JS state.",
+]);
 export default function StyleIdLayout() {
   const { showMiniMapProg } = useAnimationStore();
   const rawTheme = useColorScheme();
@@ -212,6 +216,41 @@ export default function StyleIdLayout() {
           ],
         }}
       />
+      <Stack.Screen
+        name="lesson-plan"
+        getId={({ params }) => params?.id}
+        options={{
+          headerLargeTitle: false,
+          headerTransparent: true,
+          headerTintColor: theme === "dark" ? "white" : "black",
+          headerLargeStyle: { backgroundColor: "transparent" },
+          headerBlurEffect: isGlassAvailable ? undefined : blurEffect,
+          title: "Lesson Plan",
+          headerBackButtonMenuEnabled: true,
+          headerBackButtonDisplayMode: "default",
+          unstable_headerRightItems: (props) => [
+            {
+              type: "button",
+              label: "back",
+              icon: {
+                name: "square.and.arrow.up",
+                type: "sfSymbol",
+              },
+              variant: "done",
+              onPress: async () => {
+                try {
+                  const result = await Share.share({
+                    message: "Here is the blank lesson plan payload data...",
+                    title: "Share Lesson Plan",
+                  });
+                } catch (error) {
+                  console.error("Error sharing:", error);
+                }
+              },
+            },
+          ],
+        }}
+      />
 
       <Stack.Screen
         name="[id]"
@@ -275,7 +314,9 @@ export default function StyleIdLayout() {
                   {
                     type: "action",
                     label: "Create lesson plan",
-                    onPress: () => {},
+                    onPress: () => {
+                      router.push("/tabs/collections/lesson-plan");
+                    },
                     icon: {
                       name: "doc.badge.plus",
                       type: "sfSymbol",

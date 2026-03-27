@@ -5,9 +5,8 @@ import { BlankStack } from "@/layouts/blank-stack";
 export default function TrayRoutesLayout() {
   return (
     <BlankStack>
-      <BlankStack.Screen name="index" />
       <BlankStack.Screen
-        name="b"
+        name="index"
         options={{
           screenStyleInterpolator: (props) => {
             "worklet";
@@ -22,10 +21,11 @@ export default function TrayRoutesLayout() {
         }}
       />
       <BlankStack.Screen
-        name="c"
+        name="b"
         options={{
           screenStyleInterpolator: (props) => {
             "worklet";
+
             const trayStyles = Tray.interpolator();
             return trayStyles(props);
           },

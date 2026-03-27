@@ -227,61 +227,17 @@ export default function StyleIdLayout() {
           title: "",
           unstable_headerRightItems: (props) => [
             {
-              type: "menu",
-              variant: "prominent",
+              type: "button",
+              label: "Show Map",
+              variant: "done",
               icon: {
-                name: "ellipsis",
+                name: "map.fill",
                 type: "sfSymbol",
               },
-              label: "Options",
-              menu: {
-                title: "Explore Options",
-                items: [
-                  {
-                    type: "action",
-                    label: "Show Map",
-                    icon: {
-                      name: "map.fill",
-                      type: "sfSymbol",
-                    },
-                    onPress: () => {
-                      Haptics.selectionAsync();
-                      const newValue = showMiniMapProg.value === 0 ? 1 : 0;
-                      showMiniMapProg.value = withSpring(
-                        newValue,
-                        SPRING_CONFIG,
-                      );
-                    },
-                  },
-                  {
-                    type: "action",
-                    label: "Share lesson plan",
-                    onPress: async () => {
-                      try {
-                        const result = await Share.share({
-                          message:
-                            "Here is the blank lesson plan payload data...",
-                          title: "Share Lesson Plan",
-                        });
-                      } catch (error) {
-                        console.error("Error sharing:", error);
-                      }
-                    },
-                    icon: {
-                      name: "square.and.arrow.up",
-                      type: "sfSymbol",
-                    },
-                  },
-                  {
-                    type: "action",
-                    label: "Create lesson plan",
-                    onPress: () => {},
-                    icon: {
-                      name: "doc.badge.plus",
-                      type: "sfSymbol",
-                    },
-                  },
-                ],
+              onPress: () => {
+                Haptics.selectionAsync();
+                const newValue = showMiniMapProg.value === 0 ? 1 : 0;
+                showMiniMapProg.value = withSpring(newValue, SPRING_CONFIG);
               },
             },
           ],
