@@ -219,7 +219,7 @@ export const RAW_NODES: RawNode[] = [
   // --- ROOT & LEVEL 1 ---
   {
     id: "animals",
-    label: "Animals",
+    label: "data.animals",
     width: 120,
     height: 40,
     children: ["vertebrates", "invertebrates"],

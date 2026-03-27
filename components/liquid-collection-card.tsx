@@ -2,6 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { GlassContainer, GlassView } from "expo-glass-effect";
 import { Image } from "expo-image";
+import { useTranslation } from "react-i18next";
 
 const LiquidCollectionCard = ({
   numImages,
@@ -10,6 +11,7 @@ const LiquidCollectionCard = ({
   numImages: number;
   notifications?: boolean;
 }) => {
+  const { t } = useTranslation();
   return (
     <View style={{ flex: 1, position: "relative" }}>
       <View
@@ -135,7 +137,7 @@ const LiquidCollectionCard = ({
             className="font-light text-xl"
             style={{ fontFamily: "Times New Roman" }}
           >
-            Animal
+            {t("data.animals")}
           </Text>
           <View className="px-4 py-2 bg-gray-100 rounded-xl">
             <Text className="text-gray-500">{numImages} Nodes</Text>

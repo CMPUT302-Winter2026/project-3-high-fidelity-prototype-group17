@@ -9,15 +9,14 @@ import {
   Text,
   rrect,
   Rect,
-  listFontFamilies,
 } from "@shopify/react-native-skia";
 import {
   interpolate,
   SharedValue,
-  useAnimatedReaction,
   useDerivedValue,
 } from "react-native-reanimated";
 import { LayoutNode } from "@/utils/types";
+import { useTranslation } from "react-i18next";
 
 // ── Font ──────────────────────────────────────────────────────────────────────
 
@@ -76,15 +75,16 @@ const SkiaGraphNode = ({
   const fill = depthColor(node.depth, DEPTH_COLORS);
   const stroke = depthColor(node.depth, DEPTH_STROKES);
 
+  const { t } = useTranslation();
+  const label = t(node.label);
+
   // 1. Pick the correct font for this node
   const currentFont = node.isRoot ? rootFont : font;
   const currentNewFont = node.isRoot ? rootnewfont : newfont;
 
   // 2. Measure the actual text size (fallback to 0 if font isn't loaded yet)
-  const textWidth = currentFont ? currentFont.measureText(node.label).width : 0;
-  const textHeight = currentFont
-    ? currentFont.measureText(node.label).height
-    : 0;
+  const textWidth = currentFont ? currentFont.measureText(label).width : 0;
+  const textHeight = currentFont ? currentFont.measureText(label).height : 0;
 
   // 3. APPLY PADDING: Add padding to both sides of the text
   const paddedTextWidth = textWidth + PADDING_X * 2;
@@ -152,7 +152,7 @@ const SkiaGraphNode = ({
               font={currentFont}
               x={centerX - textWidth / 2}
               y={centerY + textHeight / 2 - 3}
-              text={node.label}
+              text={label}
             />
           }
           clip={false}

@@ -1,4 +1,7 @@
 const cr = {
+  data: {
+    animals: "ᓇᓂᑐᐯᐃᑖᐱ",
+  },
   common: {
     explore: "ᓇᓂᑐᐯᐃᑖᐱ", // nânitaw-pê-itâpi
     collection: "ᒫᐊᐁᐧᑲᓂᑲᓇ", // mâmawêkanikana (Gathered things)

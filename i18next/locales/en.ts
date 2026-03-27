@@ -1,4 +1,7 @@
 const en = {
+  data: {
+    animals: "Animals",
+  },
   common: {
     explore: "Explore",
     collection: "Collection",

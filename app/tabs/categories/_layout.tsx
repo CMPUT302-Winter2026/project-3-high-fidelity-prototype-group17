@@ -6,6 +6,7 @@ import { Share, useColorScheme, View } from "react-native";
 import { LogBox } from "react-native";
 import { withSpring } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { usePersistentAppStore } from "@/store/global-persistent";
 
 LogBox.ignoreLogs([
   "The screen '[id]' was removed natively but didn't get removed from JS state",
@@ -17,6 +18,9 @@ export default function StyleIdLayout() {
   const isGlassAvailable = isLiquidGlassAvailable();
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
+
+  const { setLng, lng } = usePersistentAppStore();
+
   return (
     <Stack>
       <Stack.Screen
@@ -43,13 +47,12 @@ export default function StyleIdLayout() {
             // },
             {
               type: "button",
-              label: "switch language",
-              icon: {
-                name: "globe",
-                type: "sfSymbol",
-              },
+              label: lng === "en" ? "Syllabics Mode" : "English Mode",
+
               variant: "plain",
-              onPress: () => {},
+              onPress: () => {
+                setLng(lng === "en" ? "cr" : "en");
+              },
               accessibilityLabel: "Search items",
             },
           ],
