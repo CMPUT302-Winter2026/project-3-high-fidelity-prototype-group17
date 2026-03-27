@@ -7,7 +7,7 @@ import Transition from "react-native-screen-transitions";
 import { Stack } from "@/layouts/stack";
 import { BlankStack } from "@/layouts/blank-stack";
 import "../global.css";
-
+import "@/i18next/i18next";
 export default function RootLayout() {
   return (
     <PressablesConfig

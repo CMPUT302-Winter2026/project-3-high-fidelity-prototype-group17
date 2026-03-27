@@ -29,18 +29,18 @@ export default function StyleIdLayout() {
           headerBlurEffect: isGlassAvailable ? undefined : blurEffect,
           title: "Explore",
           unstable_headerLeftItems: (props) => [
-            {
-              type: "button",
-              label: "back",
-              icon: {
-                name: "arrow.backward",
-                type: "sfSymbol",
-              },
-              // variant: "done",
-              onPress: () => {
-                router.back();
-              },
-            },
+            // {
+            //   type: "button",
+            //   label: "back",
+            //   icon: {
+            //     name: "arrow.backward",
+            //     type: "sfSymbol",
+            //   },
+            //   // variant: "done",
+            //   onPress: () => {
+            //     router.back();
+            //   },
+            // },
             {
               type: "button",
               label: "switch language",

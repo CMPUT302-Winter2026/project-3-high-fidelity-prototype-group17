@@ -1,4 +1,3 @@
-// ── Graph definition ──────────────────────────────────────────────────────────
 export type RawNode = {
   id: string;
   label: string;
@@ -12,7 +11,7 @@ export type LayoutNode = RawNode & {
   y: number;
   isRoot: boolean;
   depth: number;
-  angle: number; // radians — centre of this node's angular slice
+  angle: number;
   startAngle: number;
   endAngle: number;
   subtreeSize: number;
@@ -20,7 +19,6 @@ export type LayoutNode = RawNode & {
 
 export type Edge = {
   id: string;
-  // cubic bezier control points
   x1: number;
   y1: number;
   cx1: number;

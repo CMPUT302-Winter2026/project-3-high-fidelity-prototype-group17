@@ -1,7 +1,9 @@
 import { Link, type Href } from "expo-router";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import Page from "@/components/page";
 import { PressableScale } from "pressto";
+import { useTranslation } from "react-i18next";
+import { usePersistentAppStore } from "@/store/global-persistent";
 type PageType = {
   title: string;
   description: string;
@@ -28,6 +30,8 @@ const screenTransitions: PageType[] = [
 ] as const;
 
 export default function Home() {
+  const { t } = useTranslation();
+  const { setLng, lng } = usePersistentAppStore();
   return (
     <Page
       title="Choose a mode"
@@ -41,6 +45,14 @@ export default function Home() {
           </PressableScale>
         </Link>
       ))}
+      <Text>{t("common.explore")}</Text>
+      <PressableScale
+        onPress={() => {
+          setLng(lng === "en" ? "cr" : "en");
+        }}
+      >
+        <Text>Change lng</Text>
+      </PressableScale>
     </Page>
   );
 }

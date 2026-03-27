@@ -35,18 +35,6 @@ export default function StyleIdLayout() {
           unstable_headerLeftItems: (props) => [
             {
               type: "button",
-              label: "back",
-              icon: {
-                name: "arrow.backward",
-                type: "sfSymbol",
-              },
-              // variant: "done",
-              onPress: () => {
-                router.back();
-              },
-            },
-            {
-              type: "button",
               label: "switch language",
               icon: {
                 name: "globe",
@@ -58,6 +46,17 @@ export default function StyleIdLayout() {
             },
           ],
           unstable_headerRightItems: (props) => [
+            {
+              type: "button",
+              label: "switch language",
+              icon: {
+                name: "plus",
+                type: "sfSymbol",
+              },
+              variant: "plain",
+              onPress: () => {},
+              accessibilityLabel: "Search items",
+            },
             {
               type: "menu",
               variant: "prominent",
