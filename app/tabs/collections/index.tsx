@@ -97,7 +97,7 @@ const Images = memo(() => {
             }}
             onPress={() => {
               router.push({
-                pathname: "/teacher/collections/[id]",
+                pathname: "/tabs/collections/[id]",
                 params: {
                   id,
                   image: item.source,

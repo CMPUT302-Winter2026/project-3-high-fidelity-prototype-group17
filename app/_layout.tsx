@@ -156,7 +156,7 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="teacher"
+            name="tabs"
             options={{
               title: "Teacher screen",
               ...Transition.Presets.SlideFromTop(),

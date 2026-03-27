@@ -41,7 +41,7 @@ const screenTransitions: PageType[] = [
   {
     title: "Teacher screen",
     description: "Modal slide from bottom.",
-    href: "/teacher/categories",
+    href: "/tabs/categories",
   },
   // {
   //   title: "Linguist screen",
