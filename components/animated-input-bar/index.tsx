@@ -175,6 +175,10 @@ const AnimatedInput: React.FC<IAnimatedInput> &
     const [inputValue, setInputValue] = useState<string>(value || "");
     const [currentIndex, setCurrentIndex] = useState<number>(0);
 
+    useEffect(() => {
+      setInputValue(value || "");
+    }, [value]);
+
     const blurProgress = useSharedValue<number>(0);
 
     useEffect(() => {

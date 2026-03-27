@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, Text, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Text,
+  Alert,
+  Keyboard,
+} from "react-native";
 import Animated, {
   FadeIn,
   FadeInUp,
@@ -19,14 +26,31 @@ import { useKeyboardHandler } from "@/utils/keyboard-handler";
 import { PressableScale } from "pressto";
 
 const PLACEHOLDERS: string[] = [
-  "Share your thoughts...",
-  "What's on your mind?",
-  "Type something interesting...",
-  "Express yourself here...",
+  "How do I say hello in Cree?",
+  "Translate 'thank you'...",
+  "What does 'tân'si' mean?",
+  "Practice numbers in Cree...",
 ];
+
+const AI_RESPONSES: string[] = [
+  "Tân'si! That's a great start. Would you like to practice saying it out loud?",
+  "Kinanâskomitin (Thank you) for asking! The word you are looking for is 'mîna' (again).",
+  "Excellent! In Cree, we often structure sentences differently. Let's break that down.",
+  "Tapwê! (True/Right!) You are getting the hang of it.",
+  "That's a tricky one. Try focusing on the vowel sounds. For example, 'î' sounds like the 'ee' in 'see'.",
+];
+
 const PADDING = 28;
+
+type Message = {
+  id: string;
+  text: string;
+  sender: "user" | "ai";
+};
+
 const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
   const [text, setText] = useState<string>("");
+  const [messages, setMessages] = useState<Message[]>([]);
   const keyboardHeight = useKeyboardHandler();
 
   const animatedInputStyle = useAnimatedStyle(() => {
@@ -37,49 +61,132 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
     };
   });
 
+  const handleSend = () => {
+    if (text.trim().length > 0) {
+      const userText = text.trim();
+
+      // Append the user's message immediately
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now().toString(), text: userText, sender: "user" },
+      ]);
+
+      setText("");
+      Keyboard.dismiss();
+
+      setTimeout(() => {
+        const randomResponse =
+          AI_RESPONSES[Math.floor(Math.random() * AI_RESPONSES.length)];
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: (Date.now() + 1).toString(),
+            text: randomResponse,
+            sender: "ai",
+          },
+        ]);
+      }, 500);
+    }
+  };
+
   return (
     <Animated.View
       style={styles.overlay}
       entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(200)}
     >
-      <Animated.View
-        entering={FadeInUp.duration(500).easing(Easing.out(Easing.exp))}
-      >
-        <UnstableSiriOrb
-          size={300}
-          speed={1}
-          noiseIntensity={1}
-          glowIntensity={1.4}
-          saturation={2}
+      {messages.length === 0 ? (
+        <Animated.View
+          exiting={FadeOut.duration(300)}
+          style={{ alignItems: "center" }}
+        >
+          <Animated.View
+            entering={FadeInUp.duration(500).easing(Easing.out(Easing.exp))}
+          >
+            <UnstableSiriOrb
+              size={300}
+              speed={1}
+              noiseIntensity={1}
+              glowIntensity={1.4}
+              saturation={2}
+              style={{
+                marginLeft: -Dimensions.get("screen").width / 2 + 1.5 * PADDING,
+                marginTop: -Dimensions.get("screen").height / 2 + 6 * PADDING,
+              }}
+              brightness={1}
+              rotationSpeed={1}
+              noiseScale={3}
+              coreIntensity={0.55}
+              edgeSoftness={0.045}
+              primaryColor={{ r: 0.45, g: 0.65, b: 1.0 }}
+              secondaryColor={{ r: 0.0, g: 0.85, b: 0.8 }}
+            />
+          </Animated.View>
+
+          <Animated.View
+            entering={FadeInUp.delay(180)
+              .duration(420)
+              .easing(Easing.out(Easing.quad))}
+          >
+            <Text
+              className="text-white text-2xl"
+              style={{ fontFamily: "system" }}
+            >
+              Hi XYZ
+            </Text>
+            <Text
+              className="text-white text-4xl"
+              style={{ fontFamily: "system", textAlign: "center" }}
+            >
+              Where should we start?
+            </Text>
+          </Animated.View>
+        </Animated.View>
+      ) : (
+        <Animated.ScrollView
           style={{
-            marginLeft: -Dimensions.get("screen").width / 2 + 1.5 * PADDING,
-            marginTop: -Dimensions.get("screen").height / 2 + 6 * PADDING,
+            position: "absolute",
+            top: 60,
+            width: "100%",
+            height: Dimensions.get("screen").height / 1.8,
           }}
-          brightness={1}
-          rotationSpeed={1}
-          noiseScale={3}
-          coreIntensity={0.55}
-          edgeSoftness={0.045}
-          primaryColor={{ r: 0.45, g: 0.65, b: 1.0 }}
-          secondaryColor={{ r: 0.0, g: 0.85, b: 0.8 }}
-        />
-      </Animated.View>
+          contentContainerStyle={{
+            paddingHorizontal: 28,
+            paddingBottom: 20,
+            justifyContent: "flex-end",
+            flexGrow: 1,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          {messages.map((msg) => {
+            const isUser = msg.sender === "user";
+            return (
+              <Animated.View
+                key={msg.id}
+                entering={FadeInUp.duration(400).springify()}
+                style={{
+                  // Keep AI pure #111, give user slightly lighter tone so they don't blend together perfectly
+                  backgroundColor: isUser ? "#1c1c1e" : "#111",
+                  paddingHorizontal: 20,
+                  paddingVertical: 16,
+                  borderRadius: 26,
+                  // 4. Align user messages to the right, AI to the left
+                  alignSelf: isUser ? "flex-end" : "flex-start",
+                  marginBottom: 12,
+                  maxWidth: "85%",
+                }}
+              >
+                <Text
+                  style={{ color: "#fff", fontSize: 18, fontFamily: "system" }}
+                >
+                  {msg.text}
+                </Text>
+              </Animated.View>
+            );
+          })}
+        </Animated.ScrollView>
+      )}
 
-      <Animated.View
-        entering={FadeInUp.delay(180)
-          .duration(420)
-          .easing(Easing.out(Easing.quad))}
-      >
-        <Text className="text-white text-2xl" style={{ fontFamily: "system" }}>
-          Hi XYZ
-        </Text>
-        <Text className="text-white text-4xl" style={{ fontFamily: "system" }}>
-          Where should we start ?
-        </Text>
-      </Animated.View>
-
-      {/* 3. Input Transition: Rises from bottom with original styles */}
       <Animated.View
         style={[animatedInputStyle]}
         entering={FadeInUp.delay(340)
@@ -100,14 +207,12 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
               flexDirection: "row",
               alignItems: "center",
               backgroundColor: "#111",
-              // Adjusted padding to balance input on left and button on right
               paddingLeft: 16,
               paddingRight: 8,
               borderRadius: 26,
               height: 96,
             }}
           >
-            {/* 1. Input Bar moved to the beginning */}
             <AnimatedInputBar
               placeholders={PLACEHOLDERS}
               value={text}
@@ -124,27 +229,15 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
                 width: 0.4,
                 backgroundColor: "#6e6e6e",
                 height: 50,
-                // Adjusted margins for new position
                 marginLeft: 10,
                 marginRight: 10,
               }}
             />
 
-            {/* 3. Send Button at the end */}
-            <PressableScale
-              onPress={() => {
-                if (text.trim().length > 0) {
-                  // Replace with your actual send logic
-                  Alert.alert("Sending", text);
-                  setText("");
-                }
-              }}
-              // style={{ padding: 10 }} // Extra tap target area
-            >
+            <PressableScale onPress={handleSend}>
               <SymbolView
-                // Changed name to paperplane for 'send' meaning
                 name={{ ios: "paperplane.fill", android: "send", web: "send" }}
-                tintColor={text.trim().length > 0 ? "#007AFF" : "#fff"} // Optional color change when text exists
+                tintColor={text.trim().length > 0 ? "#007AFF" : "#fff"}
                 size={30}
               />
             </PressableScale>
@@ -210,12 +303,12 @@ function Index() {
     }, []),
   );
 
-  // return <View style={styles.root} />;
-  return (
-    <View style={styles.root}>
-      <ListeningOverlay onDismiss={handleDismiss} />
-    </View>
-  );
+  return <View style={styles.root} />;
+  // return (
+  //   <View style={styles.root}>
+  //     <ListeningOverlay onDismiss={handleDismiss} />
+  //   </View>
+  // );
 }
 
 const styles = StyleSheet.create({

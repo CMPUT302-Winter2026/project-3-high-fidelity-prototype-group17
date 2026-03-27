@@ -26,6 +26,7 @@ import {
 import React, { useState } from "react";
 import { Dimensions } from "react-native";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
 const DefinitionRow = ({
   index,
   text,
@@ -55,7 +56,7 @@ const DefinitionRow = ({
             <HStack
               alignment="center"
               modifiers={[
-                frame({ width: 36, height: 18 }), // Keeps your badge size
+                frame({ width: 75, height: 18 }),
                 glassEffect({
                   glass: {
                     interactive: true,
@@ -95,8 +96,8 @@ export default function WordInfoSection() {
         alignment="leading"
         modifiers={[frame({ width: SCREEN_WIDTH - 96 })]}
       >
-        <VStack spacing={8}>
-          <HStack alignment="top">
+        <VStack spacing={8} alignment="leading">
+          <HStack alignment="top" modifiers={[frame({ width: "100%" })]}>
             <Text modifiers={[font({ size: 28, weight: "bold" })]}>
               acimosis
             </Text>
@@ -114,33 +115,69 @@ export default function WordInfoSection() {
               />
             </HStack>
           </HStack>
+
           <Divider />
+
+          <HStack spacing={6} alignment="center">
+            <Text
+              modifiers={[
+                font({ size: 14, weight: "semibold" }),
+                foregroundStyle("#666666"), // Subtle grey color for the label
+              ]}
+            >
+              Synonyms:
+            </Text>
+            <Text
+              modifiers={[
+                font({ size: 14, weight: "medium" }),
+                foregroundStyle("#3b4b8a"), // Matches your badge text color to tie the theme together
+              ]}
+            >
+              atimosis
+            </Text>
+            <Text
+              modifiers={[
+                font({ size: 14, weight: "medium" }),
+                foregroundStyle("#3b4b8a"), // Matches your badge text color to tie the theme together
+              ]}
+            >
+              atimosis
+            </Text>
+            <Text
+              modifiers={[
+                font({ size: 14, weight: "medium" }),
+                foregroundStyle("#3b4b8a"), // Matches your badge text color to tie the theme together
+              ]}
+            >
+              atimosis
+            </Text>
+          </HStack>
         </VStack>
 
         <VStack spacing={10} alignment="leading">
           <DefinitionRow
             index={1}
             text="pup, puppy"
-            tagLabel="CW"
-            tagDesc="adjaskdjksaj akdjksad kajdkasjk ajkdjakdjasj k"
+            tagLabel="View example"
+            tagDesc="acimosis mêtowêw. (The puppy is playing.)"
           />
           <DefinitionRow
             index={2}
             text="small dog"
-            tagLabel="CW"
-            tagDesc="adjaskdjksaj akdjksad kajdkasjk ajkdjakdjasj k"
+            tagLabel="View example"
+            tagDesc="niwâpamâw acimosis. (I see a small dog.)"
           />
           <DefinitionRow
             index={3}
             text="a pup or a puppy"
-            tagLabel="AECD"
-            tagDesc="adjaskdjksaj akdjksad kajdkasjk ajkdjakdjasj k"
+            tagLabel="View example"
+            tagDesc="nitacimosisim miyosiw. (My puppy is cute.)"
           />
           <DefinitionRow
             index={4}
             text="a newborn dog"
-            tagLabel="AECD"
-            tagDesc="adjaskdjksaj akdjksad kajdkasjk ajkdjakdjasj k"
+            tagLabel="View example"
+            tagDesc="acimosis nipâw. (The newborn dog is sleeping.)"
           />
         </VStack>
       </VStack>
