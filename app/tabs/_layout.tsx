@@ -46,6 +46,11 @@ export default function PresetsLayout() {
         <NativeTabs.Trigger name="search" role="search">
           <NativeTabs.Trigger.Label>Search</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
+
+        <NativeTabs.Trigger name="kona-ai">
+          <NativeTabs.Trigger.Label>Collection</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Icon sf="gear" drawable="ic_menu_location" />
+        </NativeTabs.Trigger>
       </NativeTabs>
     </Animated.View>
   );

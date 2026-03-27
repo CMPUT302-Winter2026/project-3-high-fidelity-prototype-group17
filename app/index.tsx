@@ -1,30 +1,7 @@
 import { Link, type Href } from "expo-router";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 import Page from "@/components/page";
 import { PressableScale } from "pressto";
-
-import {
-  Canvas,
-  Group,
-  Mask,
-  matchFont,
-  Rect,
-  rect,
-  RoundedRect,
-  rrect,
-  Text,
-} from "@shopify/react-native-skia";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import {
-  cancelAnimation,
-  interpolate,
-  useDerivedValue,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
-import { hapticWithSequence } from "@/utils/haptics-with-seq";
-import { runOnJS } from "react-native-worklets";
-import { useRef } from "react";
 type PageType = {
   title: string;
   description: string;
