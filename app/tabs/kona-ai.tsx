@@ -56,7 +56,7 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
   const animatedInputStyle = useAnimatedStyle(() => {
     return {
       transform: [
-        { translateY: interpolate(keyboardHeight.value, [0, 350], [0, -250]) },
+        { translateY: interpolate(keyboardHeight.value, [0, 350], [40, -250]) },
       ],
     };
   });
@@ -221,6 +221,8 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
               containerStyle={{
                 width: Dimensions.get("screen").width - 150,
               }}
+              onSubmitEditing={handleSend}
+              returnKeyType="send"
               selectionColor={"#353535"}
             />
 
