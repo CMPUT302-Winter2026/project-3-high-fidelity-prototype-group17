@@ -97,7 +97,7 @@ export default function WordInfoSection() {
         modifiers={[frame({ width: SCREEN_WIDTH - 96 })]}
       >
         <VStack spacing={8} alignment="leading">
-          <HStack alignment="top" modifiers={[frame({ width: "100%" })]}>
+          <HStack alignment="top">
             <Text modifiers={[font({ size: 28, weight: "bold" })]}>
               acimosis
             </Text>
