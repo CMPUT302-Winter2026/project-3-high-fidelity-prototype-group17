@@ -60,7 +60,7 @@ export const Header = ({
           </PressableScale>
         )} */}
 
-        <Host matchContents>
+        {/* <Host matchContents>
           <Menu
             label="Options"
             modifiers={[
@@ -118,7 +118,7 @@ export const Header = ({
               onPress={() => console.log("Delete")}
             />
           </Menu>
-        </Host>
+        </Host> */}
       </View>
 
       <Text className="text-base text-gray-500">{description}</Text>

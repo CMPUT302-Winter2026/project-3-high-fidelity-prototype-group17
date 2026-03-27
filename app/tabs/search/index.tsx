@@ -6,7 +6,7 @@ export default function SearchIndex() {
     <>
       <Stack.Screen
         options={{
-          title: "Search",
+          title: "",
           headerSearchBarOptions: {
             placement: "automatic",
             placeholder: "Search",

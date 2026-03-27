@@ -30,12 +30,10 @@ const screenTransitions: PageType[] = [
 ] as const;
 
 export default function Home() {
-  const { t } = useTranslation();
-  const { setLng, lng } = usePersistentAppStore();
   return (
     <Page
-      title="Choose a mode"
-      description="Are you a student, teacher or a linguist ?"
+      title="CLICK THE RED THING"
+      description="CLICK THE RED THING"
       testID="HOME_PAGE"
     >
       {screenTransitions.map((e, i) => (
@@ -45,14 +43,6 @@ export default function Home() {
           </PressableScale>
         </Link>
       ))}
-      <Text>{t("common.explore")}</Text>
-      <PressableScale
-        onPress={() => {
-          setLng(lng === "en" ? "cr" : "en");
-        }}
-      >
-        <Text>Change lng</Text>
-      </PressableScale>
     </Page>
   );
 }
