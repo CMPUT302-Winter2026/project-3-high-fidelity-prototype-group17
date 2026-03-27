@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions, Text } from "react-native";
+import { View, StyleSheet, Dimensions, Text, Alert } from "react-native";
 import Animated, {
   FadeIn,
   FadeInUp,
   FadeOut,
   Easing,
+  useAnimatedStyle,
+  interpolate,
 } from "react-native-reanimated";
 import { useSiri } from "@/components/siri-overlay/context";
 import { SiriProvider } from "@/components/siri-overlay";
@@ -13,6 +15,8 @@ import AnimatedInputBar from "@/components/animated-input-bar";
 import ChromaRing from "@/components/chroma-ring";
 import { SymbolView } from "expo-symbols";
 import UnstableSiriOrb from "@/components/unstable_siri_orb";
+import { useKeyboardHandler } from "@/utils/keyboard-handler";
+import { PressableScale } from "pressto";
 
 const PLACEHOLDERS: string[] = [
   "Share your thoughts...",
@@ -23,6 +27,15 @@ const PLACEHOLDERS: string[] = [
 const PADDING = 28;
 const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
   const [text, setText] = useState<string>("");
+  const keyboardHeight = useKeyboardHandler();
+
+  const animatedInputStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateY: interpolate(keyboardHeight.value, [0, 350], [0, -250]) },
+      ],
+    };
+  });
 
   return (
     <Animated.View
@@ -68,6 +81,7 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
 
       {/* 3. Input Transition: Rises from bottom with original styles */}
       <Animated.View
+        style={[animatedInputStyle]}
         entering={FadeInUp.delay(340)
           .duration(480)
           .easing(Easing.out(Easing.exp))}
@@ -86,32 +100,54 @@ const ListeningOverlay = ({ onDismiss }: { onDismiss: () => void }) => {
               flexDirection: "row",
               alignItems: "center",
               backgroundColor: "#111",
-              paddingHorizontal: 16,
+              // Adjusted padding to balance input on left and button on right
+              paddingLeft: 16,
+              paddingRight: 8,
               borderRadius: 26,
               height: 96,
             }}
           >
-            <SymbolView
-              name={{ ios: "info.circle", android: "info", web: "info" }}
-              tintColor="#fff"
-              size={30}
-              style={{ marginLeft: 12 }}
-            />
-            <View
-              style={{
-                width: 0.4,
-                backgroundColor: "#6e6e6e",
-                height: 50,
-                marginLeft: 30,
-              }}
-            />
+            {/* 1. Input Bar moved to the beginning */}
             <AnimatedInputBar
               placeholders={PLACEHOLDERS}
               value={text}
               animationInterval={3000}
               onChangeText={setText}
+              containerStyle={{
+                width: Dimensions.get("screen").width - 150,
+              }}
               selectionColor={"#353535"}
             />
+
+            <View
+              style={{
+                width: 0.4,
+                backgroundColor: "#6e6e6e",
+                height: 50,
+                // Adjusted margins for new position
+                marginLeft: 10,
+                marginRight: 10,
+              }}
+            />
+
+            {/* 3. Send Button at the end */}
+            <PressableScale
+              onPress={() => {
+                if (text.trim().length > 0) {
+                  // Replace with your actual send logic
+                  Alert.alert("Sending", text);
+                  setText("");
+                }
+              }}
+              // style={{ padding: 10 }} // Extra tap target area
+            >
+              <SymbolView
+                // Changed name to paperplane for 'send' meaning
+                name={{ ios: "paperplane.fill", android: "send", web: "send" }}
+                tintColor={text.trim().length > 0 ? "#007AFF" : "#fff"} // Optional color change when text exists
+                size={30}
+              />
+            </PressableScale>
           </View>
         </ChromaRing>
       </Animated.View>
@@ -174,7 +210,7 @@ function Index() {
     }, []),
   );
 
-  return <View style={styles.root} />;
+  // return <View style={styles.root} />;
   return (
     <View style={styles.root}>
       <ListeningOverlay onDismiss={handleDismiss} />
