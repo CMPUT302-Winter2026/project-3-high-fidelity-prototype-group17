@@ -44,8 +44,6 @@ const rootnewfont = matchFont({
   fontSize: 20,
   fontWeight: "normal",
 });
-const familyNames = listFontFamilies();
-console.log(familyNames);
 const DEPTH_COLORS = [
   "#7F77DD", // depth 0 — root
   "#1D9E75", // depth 1

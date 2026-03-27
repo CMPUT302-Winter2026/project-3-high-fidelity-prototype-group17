@@ -196,12 +196,6 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
     sequenceIdRef.current += 1;
   };
 
-  useDerivedValue(() => {
-    if (longTapProgress.value > 0 && longTapProgress.value < 100) {
-      console.log(`Progress: ${Math.round(longTapProgress.value)}%`);
-    }
-  });
-
   const isNodePressed = useSharedValue(false);
 
   const longpressedNode = useSharedValue("");

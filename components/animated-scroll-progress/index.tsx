@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, { memo } from "react";
 import { View, StyleSheet, Dimensions, type ViewStyle } from "react-native";
 import Animated, {
@@ -11,9 +12,9 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import type { IScrollProgress } from "@/utils/types";
+import type { IScrollProgress } from "./types";
 import { scheduleOnRN } from "react-native-worklets";
-import { DEFAULT_CONTENT_CONTAINER_STYLE } from "@/utils/conf";
+import { DEFAULT_CONTENT_CONTAINER_STYLE } from "./conf";
 const WIDTH = Dimensions.get("window").width;
 
 export const AnimatedScrollProgress: React.FC<IScrollProgress> &
