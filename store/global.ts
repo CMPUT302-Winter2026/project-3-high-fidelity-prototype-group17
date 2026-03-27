@@ -20,3 +20,17 @@ export const useAnimationStore = create<GlobalAnimationState>((set, get) => ({
     get().showMiniMapProg.value = withTiming(0);
   },
 }));
+
+interface SelectedCollectionState {
+  name: string;
+  setName: (e: string) => void;
+}
+
+export const useCollectionStore = create<SelectedCollectionState>(
+  (set, get) => ({
+    name: "",
+    setName: (state) => set({ name: state }),
+
+    //   isDragging: false,
+  }),
+);

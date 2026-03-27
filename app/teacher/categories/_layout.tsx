@@ -2,7 +2,7 @@ import { useAnimationStore } from "@/store/global";
 import { SPRING_CONFIG } from "@/utils/constants";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { router, Stack } from "expo-router";
-import { useColorScheme, View } from "react-native";
+import { Share, useColorScheme, View } from "react-native";
 import { LogBox } from "react-native";
 import { withSpring } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -220,25 +220,69 @@ export default function StyleIdLayout() {
           headerLargeTitle: false,
           headerTransparent: true,
           headerBackButtonMenuEnabled: true,
+          headerBackButtonDisplayMode: "minimal",
           headerTintColor: theme === "dark" ? "white" : "black",
           headerLargeStyle: { backgroundColor: "transparent" },
           headerBlurEffect: isGlassAvailable ? undefined : blurEffect,
           title: "",
           unstable_headerRightItems: (props) => [
             {
-              type: "button",
-              label: "Show Map",
-              // icon: {
-              //   name: "map",
-              //   type: "sfSymbol",
-              // },
+              type: "menu",
               variant: "prominent",
-              onPress: () => {
-                Haptics.selectionAsync();
-                const newValue = showMiniMapProg.value === 0 ? 1 : 0;
-                showMiniMapProg.value = withSpring(newValue, SPRING_CONFIG);
+              icon: {
+                name: "ellipsis",
+                type: "sfSymbol",
               },
-              accessibilityLabel: "Search items",
+              label: "Options",
+              menu: {
+                title: "Explore Options",
+                items: [
+                  {
+                    type: "action",
+                    label: "Show Map",
+                    icon: {
+                      name: "map.fill",
+                      type: "sfSymbol",
+                    },
+                    onPress: () => {
+                      Haptics.selectionAsync();
+                      const newValue = showMiniMapProg.value === 0 ? 1 : 0;
+                      showMiniMapProg.value = withSpring(
+                        newValue,
+                        SPRING_CONFIG,
+                      );
+                    },
+                  },
+                  {
+                    type: "action",
+                    label: "Share lesson plan",
+                    onPress: async () => {
+                      try {
+                        const result = await Share.share({
+                          message:
+                            "Here is the blank lesson plan payload data...",
+                          title: "Share Lesson Plan",
+                        });
+                      } catch (error) {
+                        console.error("Error sharing:", error);
+                      }
+                    },
+                    icon: {
+                      name: "square.and.arrow.up",
+                      type: "sfSymbol",
+                    },
+                  },
+                  {
+                    type: "action",
+                    label: "Create lesson plan",
+                    onPress: () => {},
+                    icon: {
+                      name: "doc.badge.plus",
+                      type: "sfSymbol",
+                    },
+                  },
+                ],
+              },
             },
           ],
         }}

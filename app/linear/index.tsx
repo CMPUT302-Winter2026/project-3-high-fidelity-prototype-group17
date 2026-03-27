@@ -24,6 +24,8 @@ import {
 import React from "react";
 import ConjugationSection from "@/components/conjugation-section";
 import WordInfoSection from "@/components/word-info-section";
+import { SheetButtons } from "@/components/sheet-buttons";
+import { View } from "react-native";
 export default function Screen() {
   return (
     <Tray.View snapPoint="70%" backgroundColor="#FFF">
@@ -41,60 +43,37 @@ export default function Screen() {
             <ConjugationSection />
           </Form>
         </Host>
-        <PurchaseButtons />
+        <View style={{ paddingHorizontal: 24 }}>
+          <SheetButtons
+            actions={[
+              {
+                buttonContent: (
+                  <>
+                    <Image systemName="plus" />
+                    <Text>Collections</Text>
+                  </>
+                ),
+                onClick: () => {
+                  router.push("/linear/b");
+                },
+                isCancel: false,
+              },
+              {
+                buttonContent: (
+                  <>
+                    <Image systemName="xmark" />
+                    <Text>Cancel</Text>
+                  </>
+                ),
+                onClick: () => {
+                  router.back();
+                },
+                isCancel: true,
+              },
+            ]}
+          />
+        </View>
       </Tray.Content>
     </Tray.View>
-  );
-}
-
-function PurchaseButtons() {
-  return (
-    <Host matchContents>
-      <HStack
-        modifiers={[
-          frame({ alignment: "center" }),
-          padding({ horizontal: 24 }),
-        ]}
-      >
-        <Button
-          onPress={() => router.push("/linear/b")}
-          systemImage="plus"
-          modifiers={[
-            labelStyle("titleAndIcon"),
-            buttonStyle("glassProminent"),
-            controlSize("large"),
-            background("", shapes.roundedRectangle({ cornerRadius: 10 })),
-          ]}
-        >
-          <HStack
-            spacing={24}
-            modifiers={[frame({ width: 144, alignment: "center" })]}
-          >
-            <Image systemName="plus" />
-            <Text>Collection</Text>
-          </HStack>
-        </Button>
-        <Spacer />
-        <Button
-          onPress={() => {
-            router.back();
-          }}
-          modifiers={[
-            buttonStyle("glassProminent"),
-            controlSize("large"),
-            tint("black"),
-            foregroundStyle("white"),
-            background(
-              "#f1f1f1",
-              shapes.roundedRectangle({ cornerRadius: 10 }),
-            ),
-          ]}
-        >
-          <Text modifiers={[frame({ width: 144, alignment: "center" })]}>
-            Cancel
-          </Text>
-        </Button>
-      </HStack>
-    </Host>
   );
 }

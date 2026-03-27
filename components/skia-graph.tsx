@@ -35,7 +35,7 @@ const EDGE_COLOR = "#88878055";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function SkiaGraph() {
+export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
   const { nodes, edges } = useMemo(
     () => buildForestLayout(RAW_NODES, ROOT_IDS),
     [],
@@ -369,6 +369,7 @@ export default function SkiaGraph() {
           {nodes.map((node, idx) => {
             return (
               <SkiaGraphNode
+                newNode={newNode}
                 key={idx}
                 node={node}
                 selectedNode={longpressedNode}

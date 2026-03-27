@@ -32,6 +32,18 @@ const rootFont = matchFont({
   fontSize: 30,
   fontWeight: "bold",
 });
+
+const newfont = matchFont({
+  fontFamily: Platform.select({ ios: "System" }),
+  fontSize: 12,
+  fontWeight: "normal",
+});
+
+const rootnewfont = matchFont({
+  fontFamily: Platform.select({ ios: "System" }),
+  fontSize: 20,
+  fontWeight: "normal",
+});
 const familyNames = listFontFamilies();
 console.log(familyNames);
 const DEPTH_COLORS = [
@@ -55,17 +67,20 @@ const PADDING_Y = 8;
 const SkiaGraphNode = ({
   progress,
   node,
+  newNode,
   selectedNode,
 }: {
   progress: SharedValue<number>;
   node: LayoutNode;
   selectedNode: SharedValue<string>;
+  newNode?: boolean;
 }) => {
   const fill = depthColor(node.depth, DEPTH_COLORS);
   const stroke = depthColor(node.depth, DEPTH_STROKES);
 
   // 1. Pick the correct font for this node
   const currentFont = node.isRoot ? rootFont : font;
+  const currentNewFont = node.isRoot ? rootnewfont : newfont;
 
   // 2. Measure the actual text size (fallback to 0 if font isn't loaded yet)
   const textWidth = currentFont ? currentFont.measureText(node.label).width : 0;
@@ -103,46 +118,58 @@ const SkiaGraphNode = ({
   });
 
   return (
-    // Note: Updated the clip radii to use RADIUS instead of 20 to prevent corner bleed
-    <Group clip={rrect(rect(boxX, boxY, boxWidth, boxHeight), RADIUS, RADIUS)}>
-      <RoundedRect
-        height={boxHeight}
-        width={boxWidth}
-        color={"#f1f1f1"}
-        r={RADIUS}
-        x={boxX}
-        y={boxY}
-      />
-
-      <Rect
-        height={boxHeight}
-        width={dvwidth}
-        color={"#0088ff"}
-        x={boxX}
-        y={boxY}
-      />
-
-      <Mask
-        mask={
-          <Text
-            font={currentFont}
-            x={centerX - textWidth / 2}
-            y={centerY + textHeight / 2 - 3}
-            text={node.label}
-          />
-        }
-        clip={false}
+    <>
+      {newNode && (
+        <Text
+          font={currentNewFont}
+          x={centerX - textWidth / 2 + textWidth + 5}
+          y={centerY + textHeight / 2 - 3 - textHeight - 5}
+          text={"New"}
+          color={"red"}
+        />
+      )}
+      <Group
+        clip={rrect(rect(boxX, boxY, boxWidth, boxHeight), RADIUS, RADIUS)}
       >
         <RoundedRect
           height={boxHeight}
-          width={dvwidth}
-          color={"white"}
+          width={boxWidth}
+          color={"#f1f1f1"}
           r={RADIUS}
           x={boxX}
           y={boxY}
         />
-      </Mask>
-    </Group>
+
+        <Rect
+          height={boxHeight}
+          width={dvwidth}
+          color={"#0088ff"}
+          x={boxX}
+          y={boxY}
+        />
+
+        <Mask
+          mask={
+            <Text
+              font={currentFont}
+              x={centerX - textWidth / 2}
+              y={centerY + textHeight / 2 - 3}
+              text={node.label}
+            />
+          }
+          clip={false}
+        >
+          <RoundedRect
+            height={boxHeight}
+            width={dvwidth}
+            color={"white"}
+            r={RADIUS}
+            x={boxX}
+            y={boxY}
+          />
+        </Mask>
+      </Group>
+    </>
   );
 };
 

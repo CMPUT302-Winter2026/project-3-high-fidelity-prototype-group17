@@ -1,14 +1,17 @@
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { GlassView } from "expo-glass-effect";
+import { GlassContainer, GlassView } from "expo-glass-effect";
 import { Image } from "expo-image";
 
-const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
+const LiquidCollectionCard = ({
+  numImages,
+  notifications,
+}: {
+  numImages: number;
+  notifications?: boolean;
+}) => {
   return (
     <View style={{ flex: 1, position: "relative" }}>
-      <View className="bg-gray-300 rounded-tr-2xl rounded-tl-2xl w-1/2 h-5 absolute left-0 top-1 -z-10" />
-      <View className="bg-gray-300 rounded-tr-2xl rounded-b-3xl w-full h-31 absolute left-0 top-4 -z-10" />
-
       <View
         style={{
           width: "100%",
@@ -111,33 +114,51 @@ const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
       </View>
 
       {/* Foreground Glass Overlay */}
-      <GlassView
-        className="flex items-center justify-center"
-        isInteractive
-        style={{
-          position: "absolute",
-          top: 60,
-          left: 0,
-          width: "100%",
-          height: 80,
-          borderRadius: 24,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 20,
-        }}
-      >
-        <Text
-          className="font-light text-xl"
-          style={{ fontFamily: "Times New Roman" }}
+      <GlassContainer>
+        <GlassView
+          className="flex items-center justify-center"
+          isInteractive
+          style={{
+            position: "absolute",
+            top: 60,
+            left: 0,
+            width: "100%",
+            zIndex: 2,
+            height: 80,
+            borderRadius: 24,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+          }}
         >
-          Animal
-        </Text>
-        <View className="px-4 py-2 bg-gray-100 rounded-xl">
-          <Text className="text-gray-500">{numImages} Nodes</Text>
-        </View>
-      </GlassView>
+          <Text
+            className="font-light text-xl"
+            style={{ fontFamily: "Times New Roman" }}
+          >
+            Animal
+          </Text>
+          <View className="px-4 py-2 bg-gray-100 rounded-xl">
+            <Text className="text-gray-500">{numImages} Nodes</Text>
+          </View>
+        </GlassView>
+        {notifications && (
+          <GlassView
+            style={{
+              borderRadius: 100,
+              width: 16,
+              height: 16,
+              position: "absolute",
+              top: 60,
+              right: -4,
+              backgroundColor: "red",
+              zIndex: 10,
+            }}
+            isInteractive
+          ></GlassView>
+        )}
+      </GlassContainer>
     </View>
   );
 };
 
-export default LiquidCategoryCard;
+export default LiquidCollectionCard;

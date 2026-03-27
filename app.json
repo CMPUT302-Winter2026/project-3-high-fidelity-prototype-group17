@@ -13,15 +13,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.eds2002.exporouterexample",
-      "appleTeamId": "5743WD6SWX"
+      "bundleIdentifier": "com.1pharaxh.nehiyawewin",
+      "appleTeamId": "5743WD6SWX",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.eds2002.exporouterexample"
+      "package": "com.pharaxh.nehiyawewin"
     },
     "web": {
       "bundler": "metro",
@@ -30,7 +33,8 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-image"
+      "expo-image",
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true

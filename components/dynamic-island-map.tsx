@@ -23,12 +23,11 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { LayoutNode } from "@/utils/types";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const DYNAMIC_ISLAND_HEIGHT = 28;
 export const DYNAMIC_ISLAND_WIDTH = 110;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
-const MINIMAP_WIDTH = 150;
+const MINIMAP_WIDTH = 160;
 const MINIMAP_HEIGHT = 100;
 const MINIMAP_X = SCREEN_WIDTH * 0.5 - MINIMAP_WIDTH / 2;
 const RADIUS = 25;

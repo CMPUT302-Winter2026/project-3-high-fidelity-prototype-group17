@@ -1,10 +1,11 @@
-import { Image } from "expo-image";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { memo } from "react";
 import { FlatList } from "react-native-gesture-handler";
-import Transition from "react-native-screen-transitions";
+
+import LiquidCategoryCard from "@/components/liquid-category-card";
+import { PressableScale } from "pressto";
 import Page from "@/components/page";
-import { useStyleIdStore } from "./_layout";
+import LiquidCollectionCard from "@/components/liquid-collection-card";
 
 const Images = memo(() => {
   const data = [
@@ -42,6 +43,30 @@ const Images = memo(() => {
       placeholder:
         "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
     },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
+    {
+      id: "6",
+      source: "https://picsum.photos/id/766/3000/2000",
+      placeholder:
+        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    },
   ];
 
   return (
@@ -50,26 +75,29 @@ const Images = memo(() => {
       keyExtractor={(_, idx) => String(idx)}
       numColumns={2}
       columnWrapperStyle={{ gap: 12 }}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: "transparent" }}
       scrollEnabled={true}
-      contentContainerStyle={{ paddingVertical: 12, gap: 12 }}
+      contentContainerStyle={{
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        gap: 12,
+        backgroundColor: "transparent",
+      }}
       renderItem={({ item }) => {
         const id = `shared-image-${item.id}`;
         return (
-          <Transition.Pressable
-            sharedBoundTag={id}
+          <PressableScale
             onLongPress={() => router.navigate("/examples/delete-warning")}
             style={{
               flex: 1,
               aspectRatio: 1,
-              borderRadius: 24,
-              overflow: "hidden",
-              backgroundColor: "#eee",
+              // borderRadius: 24,
+              // overflow: "visible",
+              // backgroundColor: "#eee",
             }}
             onPress={() => {
-              useStyleIdStore.setState({ boundTag: id });
               router.push({
-                pathname: "/teacher/categories/[id]",
+                pathname: "/teacher/collections/[id]",
                 params: {
                   id,
                   image: item.source,
@@ -78,15 +106,8 @@ const Images = memo(() => {
               });
             }}
           >
-            <Image
-              source={item.source}
-              placeholder={
-                item.placeholder ? { blurhash: item.placeholder } : undefined
-              }
-              style={{ width: "100%", height: "100%" }}
-              contentFit="cover"
-            />
-          </Transition.Pressable>
+            <LiquidCollectionCard numImages={5} notifications />
+          </PressableScale>
         );
       }}
     />
