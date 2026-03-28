@@ -87,7 +87,7 @@ const Images = memo(() => {
         const id = `shared-image-${item.id}`;
         return (
           <PressableScale
-            onLongPress={() => router.navigate("/examples/delete-warning")}
+            onLongPress={() => router.navigate("/delete-warning")}
             style={{
               flex: 1,
               aspectRatio: 1,

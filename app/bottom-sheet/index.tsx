@@ -57,7 +57,7 @@ export default function Screen() {
                     </>
                   ),
                   onClick: () => {
-                    router.push("/linear/b");
+                    router.push("/bottom-sheet/b");
                   },
                   isCancel: false,
                 },

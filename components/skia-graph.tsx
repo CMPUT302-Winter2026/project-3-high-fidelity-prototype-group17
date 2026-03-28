@@ -200,7 +200,7 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
 
   const longpressedNode = useSharedValue("");
   const handleSuccessNav = () => {
-    router.navigate("/linear");
+    router.navigate("/bottom-sheet");
 
     setTimeout(() => {
       progress.value = 0;
