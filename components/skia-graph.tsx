@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import {
   Canvas,
@@ -25,7 +25,7 @@ import SkiaGraphNode from "./skia-graph-nodes";
 import { hapticWithSequence } from "@/utils/haptics-with-seq";
 import { runOnJS } from "react-native-worklets";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 2;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -48,6 +48,15 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
   const lastY = useSharedValue(SCREEN_HEIGHT / 2);
   const scale = useSharedValue(1);
   const { showMiniMapProg } = useAnimationStore();
+
+  useFocusEffect(
+    useCallback(() => {
+      showMiniMapProg.set(withSpring(0, SPRING_CONFIG));
+      return () => {
+        showMiniMapProg.set(withSpring(1, SPRING_CONFIG));
+      };
+    }, []),
+  );
 
   const startScale = useSharedValue(0);
 

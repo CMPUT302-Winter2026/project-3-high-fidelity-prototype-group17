@@ -52,10 +52,14 @@ export default function StyleIdLayout() {
             {
               type: "button",
               label: lng === "en" ? "Syllabics Mode" : "English Mode",
-              icon: {
-                name: lng === "en" ? "character.textbox" : "a.square",
-                type: "sfSymbol",
-              },
+              ...(mode === "expert"
+                ? {
+                    icon: {
+                      name: lng === "en" ? "character.textbox" : "a.square",
+                      type: "sfSymbol",
+                    },
+                  }
+                : {}),
               variant: "plain",
               onPress: () => {
                 setLng(lng === "en" ? "cr" : "en");
