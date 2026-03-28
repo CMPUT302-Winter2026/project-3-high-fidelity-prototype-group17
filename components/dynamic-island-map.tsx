@@ -127,7 +127,7 @@ const MiniMap = ({
     const animationProgress = interpolate(
       showMiniMapProg.value,
       [0, 1],
-      [1, 0],
+      [0.9, 0],
       {
         extrapolateRight: Extrapolate.CLAMP,
       },
@@ -185,7 +185,7 @@ const MiniMap = ({
       layer={
         <Paint>
           <Blur blur={blurRadius} />
-          <ColorMatrix matrix={colorTransform.value} />
+          <ColorMatrix matrix={colorTransform} />
         </Paint>
       }
     >

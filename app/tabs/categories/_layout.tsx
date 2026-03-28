@@ -108,8 +108,7 @@ export default function StyleIdLayout() {
                         state: mode === "expert" ? "on" : "off",
                         type: "action",
                         label: "Expert Mode",
-                        description:
-                          "Advanced linguistic analysis with full semantic network access.",
+                        description: "Advanced linguistic analysis and filters",
                         onPress: () => setMode("expert"),
                         icon: {
                           name: "magnifyingglass.circle", // Or "magnifyingglass.circle" for deep research
