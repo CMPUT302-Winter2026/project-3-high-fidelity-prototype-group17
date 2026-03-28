@@ -53,7 +53,7 @@ export default function Screen() {
                 {
                   buttonContent: (
                     <>
-                      <Text>Add to Collections</Text>
+                      <Text>Collect word</Text>
                     </>
                   ),
                   onClick: () => {
@@ -65,7 +65,7 @@ export default function Screen() {
                   buttonContent: (
                     <>
                       <Image systemName="xmark" />
-                      <Text>Cancel</Text>
+                      <Text>Back</Text>
                     </>
                   ),
                   onClick: () => {
