@@ -7,10 +7,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { usePersistentAppStore } from "@/store/global-persistent";
 
 export default function PresetsLayout() {
   const insets = useSafeAreaInsets();
   const paddingTop = useSharedValue(insets.top);
+  const { mode } = usePersistentAppStore();
 
   useEffect(() => {
     paddingTop.value = withTiming(0, { duration: 400 });
@@ -39,15 +41,16 @@ export default function PresetsLayout() {
           />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="collections">
-          <NativeTabs.Trigger.Badge>9+</NativeTabs.Trigger.Badge>
-          <NativeTabs.Trigger.Label>Collection</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon
-            sf="rectangle.stack.fill"
-            drawable="ic_menu_archive"
-          />
-        </NativeTabs.Trigger>
-
+        {mode !== "learner" && (
+          <NativeTabs.Trigger name="collections">
+            <NativeTabs.Trigger.Badge>9+</NativeTabs.Trigger.Badge>
+            <NativeTabs.Trigger.Label>Collection</NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger.Icon
+              sf="rectangle.stack.fill"
+              drawable="ic_menu_archive"
+            />
+          </NativeTabs.Trigger>
+        )}
         <NativeTabs.Trigger name="search" role="search">
           <NativeTabs.Trigger.Label>Search</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
@@ -56,10 +59,12 @@ export default function PresetsLayout() {
           />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="kona-ai">
-          <NativeTabs.Trigger.Label>Kona AI</NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Icon sf="sparkles" drawable="ic_menu_manage" />
-        </NativeTabs.Trigger>
+        {mode === "learner" && (
+          <NativeTabs.Trigger name="kona-ai">
+            <NativeTabs.Trigger.Label>Kona AI</NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger.Icon sf="sparkles" drawable="ic_menu_manage" />
+          </NativeTabs.Trigger>
+        )}
       </NativeTabs>
     </Animated.View>
   );

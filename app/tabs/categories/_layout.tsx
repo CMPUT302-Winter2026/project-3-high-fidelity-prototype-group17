@@ -7,6 +7,10 @@ import { LogBox } from "react-native";
 import { withSpring } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { usePersistentAppStore } from "@/store/global-persistent";
+import {
+  NativeStackHeaderItemMenuAction,
+  NativeStackHeaderItemMenuSubmenu,
+} from "@react-navigation/native-stack";
 
 LogBox.ignoreLogs([
   "The screen '[id]' was removed natively but didn't get removed from JS state",
@@ -19,7 +23,7 @@ export default function StyleIdLayout() {
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
 
-  const { setLng, lng } = usePersistentAppStore();
+  const { setLng, lng, mode, setMode } = usePersistentAppStore();
 
   return (
     <Stack>
@@ -69,74 +73,46 @@ export default function StyleIdLayout() {
                 title: "Explore Options",
                 items: [
                   {
-                    type: "action",
-                    label: "Show List Info",
-                    onPress: () => {},
-                    icon: {
-                      name: "info.circle",
-                      type: "sfSymbol",
-                    },
-                  },
-                  {
-                    type: "action",
-                    label: "Select Reminders",
-                    onPress: () => {},
-                    icon: {
-                      name: "checkmark.circle",
-                      type: "sfSymbol",
-                    },
-                  },
-                  {
                     type: "submenu",
-                    label: "Sort By",
+                    label: "Switch Mode",
                     icon: {
-                      name: "arrow.up.arrow.down",
+                      name: "person.2.badge", // Swapping/Switching metaphor
                       type: "sfSymbol",
                     },
                     items: [
                       {
+                        state: mode === "learner" ? "on" : "off",
                         type: "action",
-                        label: "Manual",
-                        onPress: () => console.log("Manual sort pressed"),
+                        label: "Learner Mode",
+                        description:
+                          "Designed for beginners to build foundational Cree vocabulary.",
+                        onPress: () => setMode("learner"),
                         icon: {
-                          name: "hand.point.up.left",
+                          name: "book.closed",
                           type: "sfSymbol",
                         },
                       },
                       {
+                        state: mode === "teacher" ? "on" : "off",
                         type: "action",
-                        label: "Due Date",
-                        onPress: () => console.log("Due Date sort pressed"),
+                        label: "Teacher Mode",
+                        description:
+                          "Create lesson plans and manage word collections for students.",
+                        onPress: () => setMode("teacher"),
                         icon: {
-                          name: "calendar",
+                          name: "rectangle.and.pencil.and.ellipsis",
                           type: "sfSymbol",
                         },
                       },
                       {
+                        state: mode === "expert" ? "on" : "off",
                         type: "action",
-                        label: "Creation Date",
-                        onPress: () =>
-                          console.log("Creation Date sort pressed"),
+                        label: "Expert Mode",
+                        description:
+                          "Advanced linguistic analysis with full semantic network access.",
+                        onPress: () => setMode("expert"),
                         icon: {
-                          name: "plus.circle",
-                          type: "sfSymbol",
-                        },
-                      },
-                      {
-                        type: "action",
-                        label: "Priority",
-                        onPress: () => console.log("Priority sort pressed"),
-                        icon: {
-                          name: "exclamationmark.triangle",
-                          type: "sfSymbol",
-                        },
-                      },
-                      {
-                        type: "action",
-                        label: "Title",
-                        onPress: () => console.log("Title sort pressed"),
-                        icon: {
-                          name: "textformat.abc",
+                          name: "magnifyingglass.circle", // Or "magnifyingglass.circle" for deep research
                           type: "sfSymbol",
                         },
                       },
@@ -144,70 +120,43 @@ export default function StyleIdLayout() {
                   },
                   {
                     type: "submenu",
-                    label: "Settings",
+                    label: "Sort",
                     icon: {
-                      name: "gear",
+                      name: "line.3.horizontal.decrease.circle",
                       type: "sfSymbol",
                     },
                     items: [
                       {
                         type: "action",
-                        label: "Notifications",
+                        label: "Alphabetical (A-Z)",
                         onPress: () => {},
                         icon: {
-                          name: "bell",
+                          name: "character.cursor.ibeam",
                           type: "sfSymbol",
                         },
                       },
                       {
-                        type: "submenu",
-                        label: "Advanced",
+                        type: "action",
+                        label: "Most Recent",
+                        description: "See recently researched words first.",
+                        onPress: () => {},
+                        icon: { name: "clock", type: "sfSymbol" },
+                      },
+                      mode === "expert" && {
+                        type: "action",
+                        label: "Semantic Gaps",
+                        description:
+                          "Highlight words missing Cree/English equivalents.",
+                        onPress: () => {},
                         icon: {
-                          name: "wrench.and.screwdriver",
+                          name: "exclamationmark.magnifyingglass",
                           type: "sfSymbol",
                         },
-                        items: [
-                          {
-                            type: "action",
-                            label: "Debug Mode",
-                            onPress: () => {},
-                            icon: {
-                              name: "ladybug",
-                              type: "sfSymbol",
-                            },
-                          },
-                          {
-                            type: "action",
-                            label: "Reset Settings",
-                            onPress: () => {},
-                            icon: {
-                              name: "arrow.clockwise",
-                              type: "sfSymbol",
-                            },
-                            destructive: true,
-                          },
-                        ],
                       },
-                    ],
-                  },
-                  {
-                    type: "action",
-                    label: "Print",
-                    onPress: () => {},
-                    icon: {
-                      name: "printer",
-                      type: "sfSymbol",
-                    },
-                  },
-                  {
-                    type: "action",
-                    label: "Delete List",
-                    onPress: () => {},
-                    icon: {
-                      name: "trash",
-                      type: "sfSymbol",
-                    },
-                    destructive: true,
+                    ].filter(Boolean) as (
+                      | NativeStackHeaderItemMenuAction
+                      | NativeStackHeaderItemMenuSubmenu
+                    )[],
                   },
                 ],
               },
