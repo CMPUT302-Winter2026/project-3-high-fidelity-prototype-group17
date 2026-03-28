@@ -154,7 +154,7 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
 
   const longTapProgress = useSharedValue(0);
   const progress = useSharedValue(0.0);
-  const MIN_DURATION = 1000;
+  const MIN_DURATION = 500;
 
   const sequenceIdRef = useRef(0);
 
@@ -247,14 +247,13 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
     .onStart((e) => {
       if (isNodePressed.value) {
         runOnJS(successHaptics)();
+        runOnJS(handleSuccessNav)();
       }
     })
     .onFinalize((e, success) => {
       if (isNodePressed.value) {
         runOnJS(stopHaptics)();
-        if (success) {
-          runOnJS(handleSuccessNav)();
-        } else {
+        if (!success) {
           // If they let go early, cancel the fill and shrink it back down
           cancelAnimation(progress);
           progress.value = withTiming(0, { duration: 200 });

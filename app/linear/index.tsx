@@ -26,7 +26,10 @@ import ConjugationSection from "@/components/conjugation-section";
 import WordInfoSection from "@/components/word-info-section";
 import { SheetButtons } from "@/components/sheet-buttons";
 import { View } from "react-native";
+import { usePersistentAppStore } from "@/store/global-persistent";
 export default function Screen() {
+  const { mode } = usePersistentAppStore();
+
   return (
     <Tray.View snapPoint="70%" backgroundColor="#FFF">
       <Tray.Header title="Word information" />
@@ -43,36 +46,37 @@ export default function Screen() {
             <ConjugationSection />
           </Form>
         </Host>
-        <View style={{ paddingHorizontal: 24 }}>
-          <SheetButtons
-            actions={[
-              {
-                buttonContent: (
-                  <>
-                    <Image systemName="plus" />
-                    <Text>Collections</Text>
-                  </>
-                ),
-                onClick: () => {
-                  router.push("/linear/b");
+        {mode !== "learner" && (
+          <View style={{ paddingHorizontal: 24 }}>
+            <SheetButtons
+              actions={[
+                {
+                  buttonContent: (
+                    <>
+                      <Text>Add to Collections</Text>
+                    </>
+                  ),
+                  onClick: () => {
+                    router.push("/linear/b");
+                  },
+                  isCancel: false,
                 },
-                isCancel: false,
-              },
-              {
-                buttonContent: (
-                  <>
-                    <Image systemName="xmark" />
-                    <Text>Cancel</Text>
-                  </>
-                ),
-                onClick: () => {
-                  router.back();
+                {
+                  buttonContent: (
+                    <>
+                      <Image systemName="xmark" />
+                      <Text>Cancel</Text>
+                    </>
+                  ),
+                  onClick: () => {
+                    router.back();
+                  },
+                  isCancel: true,
                 },
-                isCancel: true,
-              },
-            ]}
-          />
-        </View>
+              ]}
+            />
+          </View>
+        )}
       </Tray.Content>
     </Tray.View>
   );

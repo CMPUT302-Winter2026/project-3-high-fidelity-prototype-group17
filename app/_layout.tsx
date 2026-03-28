@@ -159,7 +159,7 @@ export default function RootLayout() {
             name="tabs"
             options={{
               title: "Teacher screen",
-              ...Transition.Presets.SlideFromTop(),
+              ...Transition.Presets.ZoomIn(),
               experimental_enableHighRefreshRate: true,
             }}
           />
