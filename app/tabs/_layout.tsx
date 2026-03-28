@@ -10,39 +10,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePersistentAppStore } from "@/store/global-persistent";
 import { usePathname } from "expo-router";
 import { SymbolView } from "expo-symbols";
-
-function GraphScreenHelper() {
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-      }}
-    >
-      <View className="flex-row gap-2 items-center justify-center">
-        <SymbolView
-          name={{
-            ios: "hand.tap.fill",
-            android: "touch_app",
-            web: "touch_app",
-          }}
-          size={20}
-        />
-        <View className="flex-col items-start justify-center h-full ">
-          <Text className="font-bold text-sm" style={{ fontFamily: "system" }}>
-            How to explore
-          </Text>
-          <Text className="text-sm -mt-1" style={{ fontFamily: "system" }}>
-            Press and hold any node to view its details.
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-}
+import { GraphScreenHelper } from "@/components/graph-screen-helper";
+import { UserModeHelper } from "@/components/user-mode-helper";
 
 export default function PresetsLayout() {
   const insets = useSafeAreaInsets();
@@ -70,12 +39,18 @@ export default function PresetsLayout() {
           }),
         }}
       >
-        {(path.includes("/tabs/categories/") ||
-          path.includes("/tabs/collections/")) && (
+        {path.includes("/tabs/categories/") ||
+        path.includes("/tabs/collections/") ||
+        (mode === "expert" && path.includes("/tabs/categories")) ? (
           <NativeTabs.BottomAccessory>
             <GraphScreenHelper />
           </NativeTabs.BottomAccessory>
+        ) : (
+          <NativeTabs.BottomAccessory>
+            <UserModeHelper />
+          </NativeTabs.BottomAccessory>
         )}
+
         <NativeTabs.Trigger name="categories">
           <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon

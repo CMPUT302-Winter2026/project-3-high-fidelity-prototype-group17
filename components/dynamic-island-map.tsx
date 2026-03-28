@@ -23,6 +23,7 @@ import {
   withTiming,
 } from "react-native-reanimated";
 import { LayoutNode } from "@/utils/types";
+import { usePersistentAppStore } from "@/store/global-persistent";
 
 export const DYNAMIC_ISLAND_HEIGHT = 28;
 export const DYNAMIC_ISLAND_WIDTH = 110;
@@ -60,7 +61,9 @@ const MiniMap = ({
   showMiniMapProg,
   top,
 }: MiniMapProps) => {
-  const MINIMAP_Y = top + 1;
+  const { mode } = usePersistentAppStore();
+
+  const MINIMAP_Y = mode === "expert" ? top + 56 : top + 1;
 
   const preciseDots = useMemo(() => {
     if (skiaImages.length === 0 || contentBounds.width === 0) return [];

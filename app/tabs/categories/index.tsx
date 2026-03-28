@@ -5,6 +5,8 @@ import { FlatList } from "react-native-gesture-handler";
 import LiquidCategoryCard from "@/components/liquid-category-card";
 import { PressableScale } from "pressto";
 import Page from "@/components/page";
+import { usePersistentAppStore } from "@/store/global-persistent";
+import SkiaGraph from "@/components/skia-graph";
 
 const Images = memo(() => {
   const data = [
@@ -113,5 +115,7 @@ const Images = memo(() => {
 });
 
 export default function StyleId() {
+  const { mode } = usePersistentAppStore();
+  if (mode === "expert") return <SkiaGraph />;
   return <Images />;
 }

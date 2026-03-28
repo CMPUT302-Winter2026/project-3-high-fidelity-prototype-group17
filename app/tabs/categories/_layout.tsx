@@ -30,7 +30,7 @@ export default function StyleIdLayout() {
       <Stack.Screen
         name="index"
         options={{
-          headerLargeTitle: true,
+          headerLargeTitle: mode !== "expert",
           headerTransparent: true,
           headerTintColor: theme === "dark" ? "white" : "black",
           headerLargeStyle: { backgroundColor: "transparent" },
@@ -52,7 +52,10 @@ export default function StyleIdLayout() {
             {
               type: "button",
               label: lng === "en" ? "Syllabics Mode" : "English Mode",
-
+              icon: {
+                name: lng === "en" ? "character.textbox" : "a.square",
+                type: "sfSymbol",
+              },
               variant: "plain",
               onPress: () => {
                 setLng(lng === "en" ? "cr" : "en");
@@ -72,11 +75,32 @@ export default function StyleIdLayout() {
               menu: {
                 title: "Explore Options",
                 items: [
+                  ...(mode === "expert"
+                    ? [
+                        {
+                          type: "action",
+                          state: showMiniMapProg.value === 0 ? "on" : "off",
+                          label: "Show Map",
+                          icon: {
+                            name: "map.fill",
+                            type: "sfSymbol",
+                          },
+                          onPress: () => {
+                            const newValue =
+                              showMiniMapProg.value === 0 ? 1 : 0;
+                            showMiniMapProg.value = withSpring(
+                              newValue,
+                              SPRING_CONFIG,
+                            );
+                          },
+                        } as NativeStackHeaderItemMenuAction,
+                      ]
+                    : []),
                   {
                     type: "submenu",
                     label: "Switch Mode",
                     icon: {
-                      name: "person.2.badge", // Swapping/Switching metaphor
+                      name: "person.2.badge",
                       type: "sfSymbol",
                     },
                     items: [
@@ -111,7 +135,7 @@ export default function StyleIdLayout() {
                         description: "Advanced linguistic analysis and filters",
                         onPress: () => setMode("expert"),
                         icon: {
-                          name: "magnifyingglass.circle", // Or "magnifyingglass.circle" for deep research
+                          name: "magnifyingglass.circle",
                           type: "sfSymbol",
                         },
                       },
@@ -141,21 +165,22 @@ export default function StyleIdLayout() {
                         onPress: () => {},
                         icon: { name: "clock", type: "sfSymbol" },
                       },
-                      mode === "expert" && {
-                        type: "action",
-                        label: "Semantic Gaps",
-                        description:
-                          "Highlight words missing Cree/English equivalents.",
-                        onPress: () => {},
-                        icon: {
-                          name: "exclamationmark.magnifyingglass",
-                          type: "sfSymbol",
-                        },
-                      },
-                    ].filter(Boolean) as (
-                      | NativeStackHeaderItemMenuAction
-                      | NativeStackHeaderItemMenuSubmenu
-                    )[],
+                      ...(mode === "expert"
+                        ? [
+                            {
+                              type: "action",
+                              label: "Semantic Gaps",
+                              description:
+                                "Highlight words missing Cree/English equivalents.",
+                              onPress: () => {},
+                              icon: {
+                                name: "exclamationmark.magnifyingglass",
+                                type: "sfSymbol",
+                              },
+                            } as NativeStackHeaderItemMenuAction,
+                          ]
+                        : []),
+                    ],
                   },
                 ],
               },
