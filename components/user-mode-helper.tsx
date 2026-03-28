@@ -1,21 +1,31 @@
 import { View, Text } from "react-native";
 import { SymbolView } from "expo-symbols";
 import { usePersistentAppStore } from "@/store/global-persistent";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 
 export function UserModeHelper() {
   const { mode } = usePersistentAppStore();
-
+  const placement = NativeTabs.BottomAccessory.usePlacement();
   const modeConfig = {
     learner: {
-      subtitle: "Using Learner Mode",
+      subtitle:
+        placement === "regular"
+          ? "In Learner Mode • To switch, tap on top right"
+          : "In Learner Mode",
       icon: "graduationcap.fill",
     },
     teacher: {
-      subtitle: "Using Teacher Mode",
+      subtitle:
+        placement === "regular"
+          ? "In Teacher Mode • To switch, tap on top right"
+          : "In Teacher Mode",
       icon: "rectangle.and.pencil.and.ellipsis",
     },
     expert: {
-      subtitle: "Using Expert Mode",
+      subtitle:
+        placement === "regular"
+          ? "In Expert Mode • To switch, tap on top right"
+          : "In Expert Mode",
       icon: "microscope",
     },
   };
