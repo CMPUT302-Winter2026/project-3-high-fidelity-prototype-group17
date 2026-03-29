@@ -145,47 +145,37 @@ export default function StyleIdLayout() {
                       },
                     ],
                   },
-                  {
-                    type: "submenu",
-                    label: "Sort",
-                    icon: {
-                      name: "line.3.horizontal.decrease.circle",
-                      type: "sfSymbol",
-                    },
-                    items: [
-                      {
-                        type: "action",
-                        label: "Alphabetical (A-Z)",
-                        onPress: () => {},
-                        icon: {
-                          name: "character.cursor.ibeam",
-                          type: "sfSymbol",
-                        },
-                      },
-                      {
-                        type: "action",
-                        label: "Most Recent",
-                        description: "See recently researched words first.",
-                        onPress: () => {},
-                        icon: { name: "clock", type: "sfSymbol" },
-                      },
-                      // ...(mode === "expert"
-                      //   ? [
-                      //       {
-                      //         type: "action",
-                      //         label: "Semantic Gaps",
-                      //         description:
-                      //           "Highlight words missing Cree/English equivalents.",
-                      //         onPress: () => {},
-                      //         icon: {
-                      //           name: "exclamationmark.magnifyingglass",
-                      //           type: "sfSymbol",
-                      //         },
-                      //       } as NativeStackHeaderItemMenuAction,
-                      //     ]
-                      //   : []),
-                    ],
-                  },
+                  ...(mode !== "expert"
+                    ? [
+                        {
+                          type: "submenu",
+                          label: "Sort",
+                          icon: {
+                            name: "line.3.horizontal.decrease.circle",
+                            type: "sfSymbol",
+                          },
+                          items: [
+                            {
+                              type: "action",
+                              label: "Alphabetical (A-Z)",
+                              onPress: () => {},
+                              icon: {
+                                name: "character.cursor.ibeam",
+                                type: "sfSymbol",
+                              },
+                            },
+                            {
+                              type: "action",
+                              label: "Most Recent",
+                              description:
+                                "See recently researched words first.",
+                              onPress: () => {},
+                              icon: { name: "clock", type: "sfSymbol" },
+                            },
+                          ],
+                        } as NativeStackHeaderItemMenuSubmenu,
+                      ]
+                    : []),
                 ],
               },
             },
