@@ -1,3 +1,4 @@
+import { usePersistentAppStore } from "@/store/global-persistent";
 import { RAW_NODES } from "@/utils/data";
 import {
   HStack,
@@ -75,6 +76,7 @@ export default function ConjugationSection({
   const [labelParadigm, setLabelParadigm] = useState("ENGLISH");
   const { t } = useTranslation();
   const data = RAW_NODES.find((e) => e.id === id);
+  const { mode } = usePersistentAppStore();
 
   if (!data) return null;
   const conjugationData = data.word_conjugation;
@@ -112,7 +114,7 @@ export default function ConjugationSection({
           </HStack>
         ))}
 
-        {conjugationData.possession && (
+        {conjugationData.possession && mode !== "learner" && (
           <>
             {/* Centered Subtitle */}
             <Text markdownEnabled>
