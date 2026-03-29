@@ -11,6 +11,7 @@ import {
   Rect,
   useFonts,
   useFont,
+  Circle,
 } from "@shopify/react-native-skia";
 import {
   interpolate,
@@ -20,6 +21,7 @@ import {
 import { LayoutNode } from "@/utils/types";
 import { useTranslation } from "react-i18next";
 import { usePersistentAppStore } from "@/store/global-persistent";
+import { usePathname } from "expo-router";
 
 // ── Font ──────────────────────────────────────────────────────────────────────
 
@@ -83,8 +85,9 @@ const SkiaGraphNode = ({
     require("../assets/fonts/NotoSansCanadianAboriginal-VariableFont_wght.ttf"),
     20,
   );
+  const path = usePathname();
 
-  const { lng } = usePersistentAppStore();
+  const { lng, mode } = usePersistentAppStore();
   const fill = depthColor(node.depth, DEPTH_COLORS);
   const stroke = depthColor(node.depth, DEPTH_STROKES);
 
@@ -151,6 +154,18 @@ const SkiaGraphNode = ({
 
   return (
     <>
+      {mode === "expert" && !path.includes("/tabs/collections/") && (
+        <Group
+          transform={[
+            { translateX: boxX + boxWidth + 8 },
+            { translateY: boxY },
+          ]}
+        >
+          <Circle r={12} color="#007AFF" />
+          <Rect x={-6} y={-1} width={12} height={2} color="white" />
+          <Rect x={-1} y={-6} width={2} height={12} color="white" />
+        </Group>
+      )}
       {newNode && (
         <Text
           font={currentNewFont}

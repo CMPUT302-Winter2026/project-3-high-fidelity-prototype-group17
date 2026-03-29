@@ -1,6 +1,7 @@
 export type RawNode = {
   id: string;
   nls_key: string;
+  parentId?: string;
   stem_label: string;
   images: string;
   synonyms: string[];

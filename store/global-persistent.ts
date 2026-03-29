@@ -40,6 +40,11 @@ interface GlobalAppState {
 
   lng: "en" | "cr";
   setLng: (e: "en" | "cr") => void;
+
+  customNodes: RawNode[];
+  customChildOverrides: Record<string, string[]>;
+  addNodeToGraph: (parentId: string, nodeData: Partial<RawNode>) => void;
+  resetAll: () => void;
 }
 
 export const usePersistentAppStore = create<GlobalAppState>()(
@@ -47,6 +52,7 @@ export const usePersistentAppStore = create<GlobalAppState>()(
     (set) => ({
       mode: "learner",
       lng: "en",
+      customChildOverrides: {},
       collections: [],
       toDeleteId: null,
 
@@ -82,7 +88,6 @@ export const usePersistentAppStore = create<GlobalAppState>()(
             const now = Date.now();
             let updatedNodes = [...col.nodes];
 
-            // 1. Helper to add node
             const tryAddNode = (nodeToAdd: RawNode) => {
               const exists = updatedNodes.some((n) => n.id === nodeToAdd.id);
               if (!exists) {
@@ -94,8 +99,8 @@ export const usePersistentAppStore = create<GlobalAppState>()(
               }
             };
 
-            // 2. Initial ingest of primary and neighbors from RAW_DATA
             tryAddNode(primaryNode);
+
             const neighborIds = new Set<string>(primaryNode.children || []);
             RAW_NODES.forEach((node) => {
               if (node.children?.includes(primaryNode.id))
@@ -107,18 +112,20 @@ export const usePersistentAppStore = create<GlobalAppState>()(
               if (data) tryAddNode(data);
             });
 
-            // 3. SANITIZATION: Filter children of every node in the collection
-            // to ONLY include IDs that actually exist in this collection
             const collectedIds = new Set(updatedNodes.map((n) => n.id));
 
-            updatedNodes = updatedNodes.map((node) => ({
-              ...node,
-              children: (node.children || []).filter((cid) =>
-                collectedIds.has(cid),
-              ),
-            }));
+            updatedNodes = updatedNodes.map((node) => {
+              const rawNode = RAW_NODES.find((r) => r.id === node.id);
+              const sourceChildren = rawNode
+                ? rawNode.children
+                : node.children || [];
 
-            // 4. DYNAMIC ROOT CALCULATION
+              return {
+                ...node,
+                children: sourceChildren.filter((cid) => collectedIds.has(cid)),
+              };
+            });
+
             const childIdsInCollection = new Set<string>();
             updatedNodes.forEach((n) => {
               n.children?.forEach((cid) => childIdsInCollection.add(cid));
@@ -163,6 +170,70 @@ export const usePersistentAppStore = create<GlobalAppState>()(
             return { ...col, nodes: updatedNodes, rootIds: updatedRootIds };
           }),
         })),
+      resetAll: () => {
+        storage.clearAll();
+        set({
+          mode: "learner",
+          lng: "en",
+          collections: [],
+          toDeleteId: null,
+          customNodes: [],
+          customChildOverrides: {},
+        });
+      },
+
+      customNodes: [],
+      addNodeToGraph: (parentId, nodeData) =>
+        set((state) => {
+          const newNodeId = `custom-${Date.now()}`;
+
+          const newNode: RawNode = {
+            ...nodeData,
+            id: newNodeId,
+            parentId: parentId,
+            nls_key: nodeData.nls_key || "NEW_WORD",
+            stem_label: nodeData.stem_label || "NA-1",
+            images:
+              nodeData.images || "https://picsum.photos/seed/new/3000/2000",
+            width: nodeData.width || 100,
+            height: nodeData.height || 40,
+            children: [],
+            synonyms: nodeData.synonyms || [],
+            sentences: nodeData.sentences || [],
+            word_conjugation: nodeData.word_conjugation || {
+              basic: [],
+              diminutive: { titleKey: "", items: [] },
+              possession: { columns: [], rows: [], titleKey: "" },
+            },
+          };
+
+          const updatedCustom: RawNode[] = state.customNodes.map((n) => ({
+            ...n,
+            children: [...(n.children || [])],
+          }));
+
+          const updatedOverrides: Record<string, string[]> = {};
+          Object.entries(state.customChildOverrides).forEach(([k, v]) => {
+            updatedOverrides[k] = [...v];
+          });
+
+          const parentIdx = updatedCustom.findIndex((n) => n.id === parentId);
+
+          if (parentIdx !== -1) {
+            updatedCustom[parentIdx].children.push(newNodeId);
+          }
+
+          if (!updatedOverrides[parentId]) {
+            updatedOverrides[parentId] = [];
+          }
+          updatedOverrides[parentId].push(newNodeId);
+
+          updatedCustom.push(newNode);
+          return {
+            customNodes: updatedCustom,
+            customChildOverrides: updatedOverrides,
+          };
+        }),
     }),
     {
       name: "global-app-storage",

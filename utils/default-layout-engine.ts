@@ -2,10 +2,11 @@ import { Edge, LayoutNode, RawNode } from "./types";
 
 export type LayoutDirection = "horizontal" | "vertical";
 
-const X_SPACING = 300; // Horizontal space between layers/nodes
-const Y_SPACING = 400; // Vertical space between layers/nodes
+const X_SPACING = 400; // Horizontal space between layers/nodes
+const Y_SPACING = 200; // Vertical space between layers/nodes
 const ROOT_NODE_SCALE_FACTOR = 1.2;
-
+const HORIZONTAL_LEAF_SPACING = 100;
+const VERTICAL_LEAF_SPACING = 300;
 function buildOrthogonalTree(
   nodeMap: Map<string, RawNode>,
   rootId: string,
@@ -40,7 +41,10 @@ function buildOrthogonalTree(
   const secondaryPosMap = new Map<string, number>();
   let currentLeafPos = 0;
 
-  const leafSpacing = direction === "horizontal" ? 45 : 120;
+  const leafSpacing =
+    direction === "horizontal"
+      ? HORIZONTAL_LEAF_SPACING
+      : VERTICAL_LEAF_SPACING;
 
   function assignSecondaryPos(id: string): number {
     const node = nodeMap.get(id)!;

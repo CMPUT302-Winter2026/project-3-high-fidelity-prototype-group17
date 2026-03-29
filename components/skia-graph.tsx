@@ -26,7 +26,7 @@ import { hapticWithSequence } from "@/utils/haptics-with-seq";
 import { runOnJS } from "react-native-worklets";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect, usePathname } from "expo-router";
-import { LayoutNode } from "@/utils/types";
+import { LayoutNode, RawNode } from "@/utils/types";
 import { usePersistentAppStore } from "@/store/global-persistent";
 import { buildOrthogonalForestLayout } from "@/utils/default-layout-engine";
 const MIN_ZOOM = 0.1;
@@ -48,21 +48,54 @@ export default function SkiaGraph({
   newNode?: boolean;
   collectionId?: string;
 }) {
-  const { mode, collections } = usePersistentAppStore();
+  const { mode, collections, customNodes, customChildOverrides, resetAll } =
+    usePersistentAppStore();
   const path = usePathname();
   const { nodes, edges } = useMemo(() => {
-    if (collectionId) {
-      const collection = collections.find((c) => c.id === collectionId);
-      if (!collection || collection.nodes.length === 0)
-        return { nodes: [], edges: [] };
+    const nodeMap = new Map<string, RawNode>();
 
-      return buildForestLayout(collection.nodes, collection.rootIds);
+    RAW_NODES.forEach((n) =>
+      nodeMap.set(n.id, { ...n, children: [...n.children] }),
+    );
+
+    customNodes.forEach((cn) => {
+      nodeMap.set(cn.id, { ...cn, children: [...(cn.children || [])] });
+    });
+
+    customNodes.forEach((cn) => {
+      if (cn.parentId && nodeMap.has(cn.parentId)) {
+        const parent = nodeMap.get(cn.parentId)!;
+        if (!parent.children.includes(cn.id)) {
+          parent.children.push(cn.id);
+        }
+      }
+    });
+
+    Object.entries(customChildOverrides).forEach(
+      ([parentId, extraChildren]) => {
+        if (nodeMap.has(parentId)) {
+          const parent = nodeMap.get(parentId)!;
+          extraChildren.forEach((childId) => {
+            if (!parent.children.includes(childId)) {
+              parent.children.push(childId);
+            }
+          });
+        }
+      },
+    );
+
+    const allNodes = Array.from(nodeMap.values());
+
+    if (collectionId) {
+      const col = collections.find((c) => c.id === collectionId);
+      if (!col || col.nodes.length === 0) return { nodes: [], edges: [] };
+      return buildForestLayout(col.nodes, col.rootIds);
     }
 
     return mode === "expert"
-      ? buildForestLayout(RAW_NODES, ROOT_IDS)
-      : buildOrthogonalForestLayout(RAW_NODES, [id]);
-  }, [mode, id, collectionId, collections]);
+      ? buildForestLayout(allNodes, ROOT_IDS)
+      : buildOrthogonalForestLayout(allNodes, [id]);
+  }, [mode, id, collectionId, collections, customNodes, customChildOverrides]);
 
   const [hitNode, setHitNode] = useState<LayoutNode | null>(null);
 
@@ -384,7 +417,6 @@ export default function SkiaGraph({
     });
     return { minX, minY, width: maxX - minX, height: maxY - minY };
   }, [nodes]);
-  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <GestureDetector
