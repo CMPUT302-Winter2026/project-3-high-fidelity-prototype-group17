@@ -45,10 +45,12 @@ export default function PresetsLayout() {
           <NativeTabs.BottomAccessory>
             <GraphScreenHelper />
           </NativeTabs.BottomAccessory>
-        ) : (
+        ) : !path.includes("/tabs/search") ? (
           <NativeTabs.BottomAccessory>
             <UserModeHelper />
           </NativeTabs.BottomAccessory>
+        ) : (
+          <></>
         )}
 
         <NativeTabs.Trigger name="categories">
