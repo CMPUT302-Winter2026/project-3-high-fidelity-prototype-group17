@@ -1,3 +1,4 @@
+import { RAW_NODES } from "@/utils/data";
 import {
   HStack,
   Picker,
@@ -7,7 +8,8 @@ import {
   VStack,
 } from "@expo/ui/swift-ui";
 import { font, frame, pickerStyle, tag } from "@expo/ui/swift-ui/modifiers";
-import React from "react";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const TableRow = ({
   col1,
@@ -64,106 +66,89 @@ const TableRow = ({
 );
 
 export default function ConjugationSection({
+  id,
   sectionname,
 }: {
+  id: string;
   sectionname?: string;
 }) {
+  const [labelParadigm, setLabelParadigm] = useState("ENGLISH");
+  const { t } = useTranslation();
+  const data = RAW_NODES.find((e) => e.id === id);
+
+  if (!data) return null;
+  const conjugationData = data.word_conjugation;
+
+  const safeTranslate = (key: string) => (key === "—" ? "—" : t(key));
+
   return (
     <Section title={sectionname || "Word conjugation ᴬᴱᶜᴰ"}>
       {/* Top Header / Picker Row */}
       <Picker
         modifiers={[pickerStyle("segmented")]}
-        label="some thing"
-        selection={"option1"}
+        label="Label Type"
+        selection={labelParadigm}
+        onSelectionChange={(val) => setLabelParadigm(val as string)}
       >
-        <Text modifiers={[tag("option1")]}> English Label </Text>
-        <Text modifiers={[tag("option2")]}>Linguistic </Text>
-        <Text modifiers={[tag("option3")]}>Nehiyawewin </Text>
+        <Text modifiers={[tag("ENGLISH")]}>English Label</Text>
+        <Text modifiers={[tag("LINGUISTIC")]}>Linguistic</Text>
+        <Text modifiers={[tag("NEHIYAWEWIN")]}>Nehiyawewin</Text>
       </Picker>
 
+      {/* Main Container with wide spacing like the static layout */}
       <VStack spacing={20}>
-        {/* Top Definitions */}
-        <HStack alignment="center">
-          <Text markdownEnabled>*only one*</Text>
-          <Spacer />
-          <Text>acimosis</Text>
-        </HStack>
-        <HStack>
-          <Text markdownEnabled>*two or more*</Text>
-          <Spacer />
-          <Text markdownEnabled>**acimosisak**</Text>
-        </HStack>
-        <HStack>
-          <Text markdownEnabled>*another / others*</Text>
-          <Spacer />
-          <Text markdownEnabled>**acimosisa**</Text>
-        </HStack>
+        {/* Top Definitions mapped directly inside the spacing=20 wrapper */}
+        {conjugationData.basic.map((item: any, idx: number) => (
+          <HStack
+            key={idx}
+            alignment={idx === 0 ? "center" : undefined} // Match static alignment on first element
+          >
+            <Text markdownEnabled>
+              *{t(`LABEL_${labelParadigm}_${item.labelKey}`)}*
+            </Text>
+            <Spacer />
+            <Text markdownEnabled>
+              {item.isBold
+                ? `**${safeTranslate(item.valueKey)}**`
+                : safeTranslate(item.valueKey)}
+            </Text>
+          </HStack>
+        ))}
 
-        {/* Centered Subtitle */}
-        <Text markdownEnabled modifiers={[frame({ alignment: "center" })]}>
-          *smaller / younger*
-        </Text>
+        {conjugationData.possession && (
+          <>
+            {/* Centered Subtitle moved OUTSIDE the table VStack */}
+            <Text markdownEnabled>
+              *
+              {t(
+                `LABEL_${labelParadigm}_${conjugationData.possession.titleKey}`,
+              )}
+              *
+            </Text>
 
-        {/* Middle Definition */}
+            {/* Main Table - Inner VStack with tighter spacing */}
+            <VStack spacing={12}>
+              {/* Header Row */}
+              <TableRow
+                col1=""
+                col2={`**${t(`LABEL_${labelParadigm}_${conjugationData.possession.columns[0]}`)}**`}
+                col3={`**${t(`LABEL_${labelParadigm}_${conjugationData.possession.columns[1]}`)}**`}
+                col4={`**${t(`LABEL_${labelParadigm}_${conjugationData.possession.columns[2]}`)}**`}
+              />
 
-        <HStack>
-          <Text markdownEnabled>*only one*</Text>
-          <Spacer />
-          <Text>—</Text>
-        </HStack>
-
-        {/* Centered Subtitle */}
-        <Text markdownEnabled>*whose / whom something belongs to*</Text>
-
-        {/* Main Table */}
-        <VStack spacing={12}>
-          {/* Header Row */}
-          <TableRow
-            col1=""
-            col2="**only one**"
-            col3="**two or more**"
-            col4="**another / others**"
-          />
-          {/* Data Rows */}
-          <TableRow
-            col1="*my*"
-            col2="nicacimosisim"
-            col3="nicacimosisimak"
-            col4="nicacimosisima"
-          />
-          <TableRow
-            col1="*your (one)*"
-            col2="kicacimosisim"
-            col3="kicacimosisimak"
-            col4="kicacimosisima"
-          />
-          <TableRow col1="*his/her*" col2="—" col3="—" col4="ocacimosisima" />
-          <TableRow
-            col1="*our (but not your)*"
-            col2="nicacimosisiminân"
-            col3="nicacimosisiminânak"
-            col4="nicacimosisiminâna"
-          />
-          <TableRow
-            col1="*your and our*"
-            col2="kicacimosisiminaw"
-            col3="kicacimosisiminawak"
-            col4="kicacimosisiminawa"
-          />
-          <TableRow
-            col1="*your (all)*"
-            col2="kicacimosisimiwâw"
-            col3="kicacimosisimiwâwak"
-            col4="kicacimosisimiwâwa"
-          />
-          <TableRow col1="*their*" col2="—" col3="—" col4="ocacimosisimiwâwa" />
-          <TableRow
-            col1="*another's/others'*"
-            col2="—"
-            col3="—"
-            col4="ocacimosisimiyiwa"
-          />
-        </VStack>
+              {/* Data Rows */}
+              {conjugationData.possession.rows.map((row: any, idx: number) => (
+                <TableRow
+                  key={idx}
+                  col1={`*${t(`LABEL_${labelParadigm}_${row.labelKey}`)}*`}
+                  col2={safeTranslate(row.valueKeys[0])}
+                  col3={safeTranslate(row.valueKeys[1])}
+                  col4={safeTranslate(row.valueKeys[2])}
+                />
+              ))}
+            </VStack>
+          </>
+        )}
       </VStack>
     </Section>
   );

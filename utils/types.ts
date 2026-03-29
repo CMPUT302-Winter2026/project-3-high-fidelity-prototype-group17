@@ -1,11 +1,40 @@
 export type RawNode = {
   id: string;
-  label: string;
+  nls_key: string;
+  stem_label: string;
+  synonyms: string[];
+  sentences: {
+    setence: string;
+    example: string;
+  }[];
   width: number;
   height: number;
-  // list of ids of children nodes
-  children?: string[];
+  children: string[];
+  word_conjugation: {
+    basic: {
+      labelKey: string;
+      valueKey: string;
+      isBold: boolean;
+    }[];
+    diminutive: {
+      titleKey: string;
+      items: {
+        labelKey: string;
+        valueKey: string;
+        isBold: boolean;
+      }[];
+    };
+    possession: {
+      titleKey: string;
+      columns: string[];
+      rows: {
+        labelKey: string;
+        valueKeys: string[];
+      }[];
+    };
+  };
 };
+
 export type LayoutNode = RawNode & {
   x: number;
   y: number;

@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Tray } from "@/components/tray";
 
 import {
@@ -29,6 +29,9 @@ import { View } from "react-native";
 import { usePersistentAppStore } from "@/store/global-persistent";
 export default function Screen() {
   const { mode } = usePersistentAppStore();
+  const { id } = useLocalSearchParams<{
+    id: string;
+  }>();
 
   return (
     <Tray.View snapPoint="70%" backgroundColor="#FFF">
@@ -42,8 +45,8 @@ export default function Screen() {
       >
         <Host style={{ flex: 1 }}>
           <Form>
-            <WordInfoSection />
-            <ConjugationSection />
+            <WordInfoSection id={id} />
+            <ConjugationSection id={id} />
           </Form>
         </Host>
         {mode !== "learner" && (

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import {
   Canvas,
@@ -26,6 +26,7 @@ import { hapticWithSequence } from "@/utils/haptics-with-seq";
 import { runOnJS } from "react-native-worklets";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
+import { LayoutNode } from "@/utils/types";
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 2;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -40,6 +41,8 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
     () => buildForestLayout(RAW_NODES, ROOT_IDS),
     [],
   );
+  const [hitNode, setHitNode] = useState<LayoutNode | null>(null);
+
   const { top } = useSafeAreaInsets();
   // Initial pan: put the root (at 0,0 in layout space) in the screen centre
   const translateX = useSharedValue(SCREEN_WIDTH / 2);
@@ -209,7 +212,21 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
 
   const longpressedNode = useSharedValue("");
   const handleSuccessNav = () => {
-    router.navigate("/bottom-sheet");
+    router.push({
+      pathname: "/bottom-sheet",
+      params: {
+        id: hitNode?.id ?? null,
+      },
+    });
+
+    //  router.push({
+    //           pathname: "/tabs/categories/[id]",
+    //           params: {
+    //             id,
+    //             image: item.source,
+    //             placeholder: item.placeholder,
+    //           },
+    //         });
 
     setTimeout(() => {
       progress.value = 0;
@@ -222,8 +239,7 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
       // Convert the physical screen touch into Canvas/Graph coordinates
       const graphX = (e.x - translateX.value) / scale.value;
       const graphY = (e.y - translateY.value) / scale.value;
-
-      let hitNode = null;
+      let temp = null;
 
       for (let i = 0; i < nodes.length; i++) {
         const n = nodes[i];
@@ -235,16 +251,17 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
           graphY >= n.y - hitPadding &&
           graphY <= n.y + n.height + hitPadding
         ) {
-          hitNode = n;
+          runOnJS(setHitNode)(n);
+          temp = n;
           break;
         }
       }
 
       //successfully hit a node!
-      if (hitNode) {
+      if (temp) {
         isNodePressed.value = true;
 
-        longpressedNode.set(hitNode.id);
+        longpressedNode.set(temp.id);
 
         progress.value = withTiming(1, { duration: MIN_DURATION });
 

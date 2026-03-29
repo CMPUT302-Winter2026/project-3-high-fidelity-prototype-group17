@@ -9,6 +9,8 @@ import {
   Text,
   rrect,
   Rect,
+  useFonts,
+  useFont,
 } from "@shopify/react-native-skia";
 import {
   interpolate,
@@ -17,6 +19,7 @@ import {
 } from "react-native-reanimated";
 import { LayoutNode } from "@/utils/types";
 import { useTranslation } from "react-i18next";
+import { usePersistentAppStore } from "@/store/global-persistent";
 
 // ── Font ──────────────────────────────────────────────────────────────────────
 
@@ -72,14 +75,31 @@ const SkiaGraphNode = ({
   selectedNode: SharedValue<string>;
   newNode?: boolean;
 }) => {
+  const creeFont = useFont(
+    require("../assets/fonts/NotoSansCanadianAboriginal-VariableFont_wght.ttf"),
+    12,
+  );
+  const rootCreeFont = useFont(
+    require("../assets/fonts/NotoSansCanadianAboriginal-VariableFont_wght.ttf"),
+    20,
+  );
+
+  const { lng } = usePersistentAppStore();
   const fill = depthColor(node.depth, DEPTH_COLORS);
   const stroke = depthColor(node.depth, DEPTH_STROKES);
 
   const { t } = useTranslation();
-  const label = t(node.label);
+  const label = t(node.nls_key);
 
   // 1. Pick the correct font for this node
-  const currentFont = node.isRoot ? rootFont : font;
+  const currentFont =
+    lng === "cr"
+      ? node.isRoot
+        ? rootCreeFont
+        : creeFont
+      : node.isRoot
+        ? rootFont
+        : font;
   const currentNewFont = node.isRoot ? rootnewfont : newfont;
 
   // 2. Measure the actual text size (fallback to 0 if font isn't loaded yet)
