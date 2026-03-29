@@ -27,6 +27,8 @@ import { runOnJS } from "react-native-worklets";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
 import { LayoutNode } from "@/utils/types";
+import { usePersistentAppStore } from "@/store/global-persistent";
+import { buildOrthogonalForestLayout } from "@/utils/default-layout-engine";
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 2;
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -37,10 +39,20 @@ const EDGE_COLOR = "#88878055";
 const PADDING = 300;
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
+export default function SkiaGraph({
+  id,
+  newNode,
+}: {
+  id: string;
+  newNode?: boolean;
+}) {
+  const { mode } = usePersistentAppStore();
   const { nodes, edges } = useMemo(
-    () => buildForestLayout(RAW_NODES, ROOT_IDS),
-    [],
+    () =>
+      mode === "expert"
+        ? buildForestLayout(RAW_NODES, ROOT_IDS)
+        : buildOrthogonalForestLayout(RAW_NODES, [id]),
+    [mode],
   );
   const [hitNode, setHitNode] = useState<LayoutNode | null>(null);
 

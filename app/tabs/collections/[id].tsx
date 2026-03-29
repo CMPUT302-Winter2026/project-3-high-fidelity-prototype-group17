@@ -13,7 +13,7 @@ export default function ImageDetail() {
 
   return (
     <View className="flex-1">
-      <SkiaGraph newNode={true} />
+      <SkiaGraph newNode={true} id={id} />
     </View>
   );
 }

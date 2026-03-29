@@ -220,6 +220,9 @@ export function buildForestLayout(nodes: RawNode[], rootIds: string[]) {
   const allEdges: Edge[] = [];
 
   let currentOffsetX = 0;
+  let currentOffsetY = 0;
+  let currentRowMaxRadius = 0;
+  let colIndex = 0;
 
   for (const rootId of rootIds) {
     if (!nodeMap.has(rootId)) continue;
@@ -228,13 +231,22 @@ export function buildForestLayout(nodes: RawNode[], rootIds: string[]) {
       nodes: treeNodes,
       edges: treeEdges,
       maxRadius,
-    } = buildRadialLayout(nodeMap, rootId, currentOffsetX, 0);
+    } = buildRadialLayout(nodeMap, rootId, currentOffsetX, currentOffsetY);
 
     allNodes.push(...treeNodes);
     allEdges.push(...treeEdges);
 
-    // Shift the X offset for the next tree using the dynamically calculated max radius
-    currentOffsetX += maxRadius * 2 + TREE_SPACING;
+    currentRowMaxRadius = Math.max(currentRowMaxRadius, maxRadius);
+
+    if (colIndex === 0) {
+      currentOffsetX += maxRadius * 2 + TREE_SPACING;
+      colIndex = 1;
+    } else {
+      currentOffsetX = 0;
+      currentOffsetY += currentRowMaxRadius * 2 + TREE_SPACING;
+      currentRowMaxRadius = 0;
+      colIndex = 0;
+    }
   }
 
   return { nodes: allNodes, edges: allEdges };

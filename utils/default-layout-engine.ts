@@ -2,9 +2,9 @@ import { Edge, LayoutNode, RawNode } from "./types";
 
 export type LayoutDirection = "horizontal" | "vertical";
 
-const X_SPACING = 200; // Horizontal space between layers/nodes
-const Y_SPACING = 80; // Vertical space between layers/nodes
-const ROOT_NODE_SCALE_FACTOR = 1.8; // <-- Make the root node bigger!
+const X_SPACING = 300; // Horizontal space between layers/nodes
+const Y_SPACING = 400; // Vertical space between layers/nodes
+const ROOT_NODE_SCALE_FACTOR = 1.2;
 
 function buildOrthogonalTree(
   nodeMap: Map<string, RawNode>,

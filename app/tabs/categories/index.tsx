@@ -60,6 +60,6 @@ const Images = memo(() => {
 
 export default function StyleId() {
   const { mode } = usePersistentAppStore();
-  if (mode === "expert") return <SkiaGraph />;
+  if (mode === "expert") return <SkiaGraph id="none" />;
   return <Images />;
 }
