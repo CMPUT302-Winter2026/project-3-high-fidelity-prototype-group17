@@ -137,7 +137,7 @@ const LiquidCollectionCard = ({
             className="font-light text-xl"
             style={{ fontFamily: "Times New Roman" }}
           >
-            {t("data.animals")}
+            {t("animals")}
           </Text>
           <View className="px-4 py-2 bg-gray-100 rounded-xl">
             <Text className="text-gray-500">{numImages} Nodes</Text>

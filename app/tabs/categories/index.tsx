@@ -7,72 +7,15 @@ import { PressableScale } from "pressto";
 import Page from "@/components/page";
 import { usePersistentAppStore } from "@/store/global-persistent";
 import SkiaGraph from "@/components/skia-graph";
+import { RAW_NODES, ROOT_IDS } from "@/utils/data";
+import keyBy from "@/utils/keyBy";
 
 const Images = memo(() => {
-  const data = [
-    {
-      id: "1",
-      source: "https://picsum.photos/id/63/3000/2000",
-      placeholder: "LwLSuiW;i_S2|xS2SLWp#TS2XRoL",
-    },
-    {
-      id: "2",
-      source: "https://picsum.photos/id/429/3000/2000",
-      placeholder: "LRLNPtrV_MDOml.8.SDiM_kCRO%#",
-    },
-    {
-      id: "3",
-      source: "https://picsum.photos/id/326/3000/2000",
-      placeholder:
-        "|NDJ;PfQ~qofayj[fQj[fQf6ayfQfQj[fQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "4",
-      source: "https://picsum.photos/id/431/3000/2000",
-      placeholder:
-        "|NECwTfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "5",
-      source: "https://picsum.photos/id/493/3000/2000",
-      placeholder:
-        "|MFF%?fQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-  ];
+  const keyMap = keyBy(RAW_NODES, "id");
 
   return (
     <FlatList
-      data={data}
+      data={ROOT_IDS}
       keyExtractor={(_, idx) => String(idx)}
       numColumns={2}
       columnWrapperStyle={{ gap: 12 }}
@@ -85,7 +28,8 @@ const Images = memo(() => {
         backgroundColor: "transparent",
       }}
       renderItem={({ item }) => {
-        const id = `shared-image-${item.id}`;
+        const data = keyMap[item];
+        const id = data.id;
         return (
           <PressableScale
             style={{
@@ -100,13 +44,13 @@ const Images = memo(() => {
                 pathname: "/tabs/categories/[id]",
                 params: {
                   id,
-                  image: item.source,
-                  placeholder: item.placeholder,
+                  image: data.images,
+                  placeholder: data.nls_key,
                 },
               });
             }}
           >
-            <LiquidCategoryCard numImages={5} />
+            <LiquidCategoryCard id={id} />
           </PressableScale>
         );
       }}

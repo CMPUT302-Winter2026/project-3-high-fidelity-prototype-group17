@@ -79,6 +79,8 @@ export default function ConjugationSection({
   if (!data) return null;
   const conjugationData = data.word_conjugation;
 
+  const getUILabelKey = (baseKey: string) =>
+    `LABEL_${labelParadigm}_${baseKey}`;
   const safeTranslate = (key: string) => (key === "—" ? "—" : t(key));
 
   return (
@@ -95,17 +97,12 @@ export default function ConjugationSection({
         <Text modifiers={[tag("NEHIYAWEWIN")]}>Nehiyawewin</Text>
       </Picker>
 
-      {/* Main Container with wide spacing like the static layout */}
       <VStack spacing={20}>
-        {/* Top Definitions mapped directly inside the spacing=20 wrapper */}
+        {/* Top Definitions */}
         {conjugationData.basic.map((item: any, idx: number) => (
-          <HStack
-            key={idx}
-            alignment={idx === 0 ? "center" : undefined} // Match static alignment on first element
-          >
-            <Text markdownEnabled>
-              *{t(`LABEL_${labelParadigm}_${item.labelKey}`)}*
-            </Text>
+          <HStack key={idx} alignment={idx === 0 ? "center" : undefined}>
+            {/* Using the explicit helper here */}
+            <Text markdownEnabled>*{t(getUILabelKey(item.labelKey))}*</Text>
             <Spacer />
             <Text markdownEnabled>
               {item.isBold
@@ -117,30 +114,25 @@ export default function ConjugationSection({
 
         {conjugationData.possession && (
           <>
-            {/* Centered Subtitle moved OUTSIDE the table VStack */}
+            {/* Centered Subtitle */}
             <Text markdownEnabled>
-              *
-              {t(
-                `LABEL_${labelParadigm}_${conjugationData.possession.titleKey}`,
-              )}
-              *
+              *{t(getUILabelKey(conjugationData.possession.titleKey))}*
             </Text>
 
-            {/* Main Table - Inner VStack with tighter spacing */}
             <VStack spacing={12}>
               {/* Header Row */}
               <TableRow
                 col1=""
-                col2={`**${t(`LABEL_${labelParadigm}_${conjugationData.possession.columns[0]}`)}**`}
-                col3={`**${t(`LABEL_${labelParadigm}_${conjugationData.possession.columns[1]}`)}**`}
-                col4={`**${t(`LABEL_${labelParadigm}_${conjugationData.possession.columns[2]}`)}**`}
+                col2={`**${t(getUILabelKey(conjugationData.possession.columns[0]))}**`}
+                col3={`**${t(getUILabelKey(conjugationData.possession.columns[1]))}**`}
+                col4={`**${t(getUILabelKey(conjugationData.possession.columns[2]))}**`}
               />
 
               {/* Data Rows */}
               {conjugationData.possession.rows.map((row: any, idx: number) => (
                 <TableRow
                   key={idx}
-                  col1={`*${t(`LABEL_${labelParadigm}_${row.labelKey}`)}*`}
+                  col1={`*${t(getUILabelKey(row.labelKey))}*`}
                   col2={safeTranslate(row.valueKeys[0])}
                   col3={safeTranslate(row.valueKeys[1])}
                   col4={safeTranslate(row.valueKeys[2])}

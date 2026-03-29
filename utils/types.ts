@@ -2,6 +2,7 @@ export type RawNode = {
   id: string;
   nls_key: string;
   stem_label: string;
+  images: string;
   synonyms: string[];
   sentences: {
     setence: string;

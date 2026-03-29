@@ -33,7 +33,8 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const BG_COLOR = "#FFF";
 const EDGE_COLOR = "#88878055";
-
+// constrained padding
+const PADDING = 300;
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
@@ -75,8 +76,7 @@ export default function SkiaGraph({ newNode }: { newNode?: boolean }) {
       if (node.x + node.width > maxX) maxX = node.x + node.width;
       if (node.y + node.height > maxY) maxY = node.y + node.height;
     });
-    // Add a little padding so it doesn't lock directly against the glass
-    const PADDING = 50;
+
     return {
       minX: minX - PADDING,
       minY: minY - PADDING,

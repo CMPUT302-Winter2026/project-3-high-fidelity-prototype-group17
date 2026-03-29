@@ -1,17 +1,56 @@
 import { Text, View } from "react-native";
-import React from "react";
+import React, { useMemo } from "react";
 import { GlassView } from "expo-glass-effect";
 import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
+import { RAW_NODES } from "@/utils/data";
+import keyBy from "@/utils/keyBy";
 
-const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
+const LiquidCategoryCard = ({ id }: { id: string }) => {
   const { t } = useTranslation();
+
+  const { rootData, childImages, nodesCount } = useMemo(() => {
+    const keyMap = keyBy(RAW_NODES, "id");
+    const root = keyMap[id];
+
+    // Traverse the full tree to count ALL descendant nodes
+    // and collect images from across the whole tree
+    const allDescendantIds: string[] = [];
+    const queue = [...(root?.children || [])];
+
+    while (queue.length > 0) {
+      const currentId = queue.shift()!;
+      allDescendantIds.push(currentId);
+      const currentNode = keyMap[currentId];
+      if (currentNode?.children?.length) {
+        queue.push(...currentNode.children);
+      }
+    }
+
+    // Collect images from descendants (up to 5), falling back to root image
+    const images = allDescendantIds
+      .slice(0, 5)
+      .map((childId) => keyMap[childId]?.images)
+      .filter(Boolean);
+
+    return {
+      rootData: root,
+      childImages: images,
+      nodesCount: allDescendantIds.length, // full descendant count
+    };
+  }, [id]);
+
+  if (!rootData) return null;
+
+  const getImg = (index: number) => childImages[index] || rootData.images;
 
   return (
     <View style={{ flex: 1, position: "relative" }}>
+      {/* Background Folder Shapes - EXACT ORIGINALS */}
       <View className="bg-gray-300 rounded-tr-2xl rounded-tl-2xl w-1/2 h-5 absolute left-0 top-1 -z-10" />
       <View className="bg-gray-300 rounded-tr-2xl rounded-b-3xl w-full h-31 absolute left-0 top-4 -z-10" />
 
+      {/* Image Stack Container - EXACT ORIGINALS */}
       <View
         style={{
           width: "100%",
@@ -35,9 +74,7 @@ const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
             transformOrigin: "bottom",
             transform: [{ rotate: "-15deg" }, { translateX: -50 }],
           }}
-          source={{
-            uri: "https://picsum.photos/seed/696/3000/2000",
-          }}
+          source={getImg(0)}
         />
 
         {/* Far Right Image */}
@@ -53,9 +90,7 @@ const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
             transformOrigin: "bottom",
             transform: [{ rotate: "15deg" }, { translateX: 50 }],
           }}
-          source={{
-            uri: "https://picsum.photos/seed/800/3000/2000",
-          }}
+          source={getImg(1)}
         />
 
         {/* Inner Left Image */}
@@ -71,9 +106,7 @@ const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
             transformOrigin: "bottom",
             transform: [{ rotate: "-5deg" }, { translateX: -25 }],
           }}
-          source={{
-            uri: "https://picsum.photos/seed/100/3000/2000",
-          }}
+          source={getImg(2)}
         />
 
         {/* Inner Right Image */}
@@ -89,9 +122,7 @@ const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
             transformOrigin: "bottom",
             transform: [{ rotate: "5deg" }, { translateX: 25 }],
           }}
-          source={{
-            uri: "https://picsum.photos/seed/500/3000/2000",
-          }}
+          source={getImg(3)}
         />
 
         {/* Center Main Image */}
@@ -107,13 +138,11 @@ const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
             transformOrigin: "bottom",
             transform: [{ rotate: "0deg" }, { translateY: -2 }],
           }}
-          source={{
-            uri: "https://picsum.photos/seed/600/3000/2000",
-          }}
+          source={getImg(4)}
         />
       </View>
 
-      {/* Foreground Glass Overlay */}
+      {/* Foreground Glass Overlay - EXACT ORIGINALS */}
       <GlassView
         className="flex items-center justify-center"
         isInteractive
@@ -133,10 +162,10 @@ const LiquidCategoryCard = ({ numImages }: { numImages: number }) => {
           className="font-light text-xl"
           style={{ fontFamily: "Times New Roman" }}
         >
-          {t("data.animals")}
+          {t(rootData.nls_key)}
         </Text>
         <View className="px-4 py-2 bg-gray-100 rounded-xl">
-          <Text className="text-gray-500">{numImages} Nodes</Text>
+          <Text className="text-gray-500">{nodesCount + 1} Nodes</Text>
         </View>
       </GlassView>
     </View>

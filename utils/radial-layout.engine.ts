@@ -1,9 +1,9 @@
 import { LayoutNode, RawNode, Edge } from "./types";
 
-const MIN_RING_SPACING = 150; // Minimum distance between parent and child rings
+const MIN_RING_SPACING = 200; // Minimum distance between parent and child rings
 const NODE_PADDING = 1; // Extra physical pixel padding around nodes to prevent touching
 const MIN_ARC = 0.2; // Lowered this! 1 radian is 57 degrees (too big). 0.2 is ~11 degrees.
-const TREE_SPACING = 200;
+const TREE_SPACING = 1000;
 // ── Layout engine (pure JS, no ELK) ──────────────────────────────────────────
 //
 // Three-phase algorithm inspired by the blog's radial approach:
