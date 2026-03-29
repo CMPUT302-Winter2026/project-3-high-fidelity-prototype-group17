@@ -2,21 +2,24 @@ import { StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { GlassContainer, GlassView } from "expo-glass-effect";
 import { Image } from "expo-image";
-import { useTranslation } from "react-i18next";
 
 const LiquidCollectionCard = ({
-  numImages,
+  name,
+  numNodes,
+  images,
   notifications,
 }: {
-  numImages: number;
+  name: string;
+  numNodes: number;
+  images: string[];
   notifications?: boolean;
 }) => {
-  const { t } = useTranslation();
   return (
-    <View style={{ flex: 1, position: "relative" }}>
+    <View style={{ flex: 1, position: "relative", maxWidth: 200 }}>
       <View
         style={{
           width: "100%",
+
           height: "100%",
           position: "absolute",
           top: 24,
@@ -25,94 +28,95 @@ const LiquidCollectionCard = ({
         }}
       >
         {/* Far Left Image */}
-        <Image
-          style={{
-            width: 60,
-            height: 80,
-            borderWidth: 2,
-            borderRadius: 16,
-            borderColor: "white",
-            position: "absolute",
-            zIndex: 1,
-            transformOrigin: "bottom",
-            transform: [{ rotate: "-15deg" }, { translateX: -50 }],
-          }}
-          source={{
-            uri: "https://picsum.photos/seed/696/3000/2000",
-          }}
-        />
+        {images.length >= 2 && (
+          <Image
+            style={{
+              width: 60,
+              height: 80,
+              borderWidth: 2,
+              borderRadius: 16,
+              borderColor: "white",
+              position: "absolute",
+              zIndex: 1,
+              transformOrigin: "bottom",
+              transform: [{ rotate: "-15deg" }, { translateX: -50 }],
+            }}
+            source={{ uri: images[0] }}
+          />
+        )}
 
         {/* Far Right Image */}
-        <Image
-          style={{
-            width: 60,
-            height: 80,
-            borderWidth: 2,
-            borderRadius: 16,
-            borderColor: "white",
-            position: "absolute",
-            zIndex: 1,
-            transformOrigin: "bottom",
-            transform: [{ rotate: "15deg" }, { translateX: 50 }],
-          }}
-          source={{
-            uri: "https://picsum.photos/seed/800/3000/2000",
-          }}
-        />
+        {images.length >= 3 && (
+          <Image
+            style={{
+              width: 60,
+              height: 80,
+              borderWidth: 2,
+              borderRadius: 16,
+              borderColor: "white",
+              position: "absolute",
+              zIndex: 1,
+              transformOrigin: "bottom",
+              transform: [{ rotate: "15deg" }, { translateX: 50 }],
+            }}
+            source={{ uri: images[1] }}
+          />
+        )}
 
         {/* Inner Left Image */}
-        <Image
-          style={{
-            width: 60,
-            height: 80,
-            borderWidth: 2,
-            borderRadius: 16,
-            borderColor: "white",
-            position: "absolute",
-            zIndex: 2,
-            transformOrigin: "bottom",
-            transform: [{ rotate: "-5deg" }, { translateX: -25 }],
-          }}
-          source={{
-            uri: "https://picsum.photos/seed/100/3000/2000",
-          }}
-        />
+        {images.length >= 4 && (
+          <Image
+            style={{
+              width: 60,
+              height: 80,
+              borderWidth: 2,
+              borderRadius: 16,
+              borderColor: "white",
+              position: "absolute",
+              zIndex: 2,
+              transformOrigin: "bottom",
+              transform: [{ rotate: "-5deg" }, { translateX: -25 }],
+            }}
+            source={{ uri: images[2] }}
+          />
+        )}
+
+        {images.length >= 5 && (
+          <Image
+            style={{
+              width: 60,
+              height: 80,
+              borderWidth: 2,
+              borderRadius: 16,
+              borderColor: "white",
+              position: "absolute",
+              zIndex: 2,
+              transformOrigin: "bottom",
+              transform: [{ rotate: "5deg" }, { translateX: 25 }],
+            }}
+            source={{ uri: images[3] }}
+          />
+        )}
 
         {/* Inner Right Image */}
-        <Image
-          style={{
-            width: 60,
-            height: 80,
-            borderWidth: 2,
-            borderRadius: 16,
-            borderColor: "white",
-            position: "absolute",
-            zIndex: 2,
-            transformOrigin: "bottom",
-            transform: [{ rotate: "5deg" }, { translateX: 25 }],
-          }}
-          source={{
-            uri: "https://picsum.photos/seed/500/3000/2000",
-          }}
-        />
 
         {/* Center Main Image */}
-        <Image
-          style={{
-            width: 60,
-            height: 100,
-            borderWidth: 2,
-            borderRadius: 16,
-            borderColor: "white",
-            position: "absolute",
-            zIndex: 3,
-            transformOrigin: "bottom",
-            transform: [{ rotate: "0deg" }, { translateY: -2 }],
-          }}
-          source={{
-            uri: "https://picsum.photos/seed/600/3000/2000",
-          }}
-        />
+        {images.length >= 1 && (
+          <Image
+            style={{
+              width: 60,
+              height: 100,
+              borderWidth: 2,
+              borderRadius: 16,
+              borderColor: "white",
+              position: "absolute",
+              zIndex: 3,
+              transformOrigin: "bottom",
+              transform: [{ rotate: "0deg" }, { translateY: -2 }],
+            }}
+            source={{ uri: images[images.length - 1] }}
+          />
+        )}
       </View>
 
       {/* Foreground Glass Overlay */}
@@ -136,11 +140,12 @@ const LiquidCollectionCard = ({
           <Text
             className="font-light text-xl"
             style={{ fontFamily: "Times New Roman" }}
+            numberOfLines={1}
           >
-            {t("animals")}
+            {name}
           </Text>
-          <View className="px-4 py-2 bg-gray-100 rounded-xl">
-            <Text className="text-gray-500">{numImages} Nodes</Text>
+          <View className="px-4 py-2 bg-gray-100 rounded-xl mt-1">
+            <Text className="text-gray-500">{numNodes} Nodes</Text>
           </View>
         </GlassView>
         {notifications && (

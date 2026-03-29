@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, usePathname } from "expo-router";
 import { Tray } from "@/components/tray";
 
 import {
@@ -29,8 +29,9 @@ import { View } from "react-native";
 import { usePersistentAppStore } from "@/store/global-persistent";
 export default function Screen() {
   const { mode } = usePersistentAppStore();
-  const { id } = useLocalSearchParams<{
+  const { id, hideNext } = useLocalSearchParams<{
     id: string;
+    hideNext: string;
   }>();
 
   return (
@@ -49,7 +50,7 @@ export default function Screen() {
             <ConjugationSection id={id} />
           </Form>
         </Host>
-        {mode !== "learner" && (
+        {mode !== "learner" && hideNext === "false" && (
           <View style={{ paddingHorizontal: 24 }}>
             <SheetButtons
               actions={[
@@ -60,7 +61,12 @@ export default function Screen() {
                     </>
                   ),
                   onClick: () => {
-                    router.push("/bottom-sheet/b");
+                    router.push({
+                      pathname: "/bottom-sheet/b",
+                      params: {
+                        id: id,
+                      },
+                    });
                   },
                   isCancel: false,
                 },

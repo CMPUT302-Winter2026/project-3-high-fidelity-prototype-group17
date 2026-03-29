@@ -1,13 +1,11 @@
-import { useCollectionStore } from "@/store/global";
+import { usePersistentAppStore } from "@/store/global-persistent";
 import {
   Button,
   HStack,
   LabeledContent,
-  Picker,
   Rectangle,
   ScrollView,
   Section,
-  Spacer,
   Text,
   TextField,
   VStack,
@@ -29,23 +27,17 @@ import {
   shadow,
   shapes,
 } from "@expo/ui/swift-ui/modifiers";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Alert } from "react-native";
 
-const CATEGORIES = [
-  { id: "1", name: "Animals", count: 10, color: "#3b4b8a" },
-  { id: "2", name: "Plants", count: 24, color: "#2ecc71" },
-  { id: "3", name: "Landscapes", count: 15, color: "#e74c3c" },
-  { id: "4", name: "Architecture", count: 42, color: "#8e44ad" },
-];
+const COLORS = ["#3b4b8a", "#2ecc71", "#e74c3c", "#8e44ad"];
 
 function NativeCategoryCard({
   category,
   isSelected,
   onSelect,
 }: {
-  category: any;
+  category: { id: string; name: string; count: number; color: string };
   isSelected: boolean;
   onSelect: () => void;
 }) {
@@ -158,12 +150,21 @@ function NativeCategoryCard({
   );
 }
 
-export default function ColectionSection() {
-  const { name, setName } = useCollectionStore();
-  useEffect(() => {
-    setName("");
-  }, []);
-  const [description, setDescription] = useState("");
+export default function ColectionSection({
+  id,
+  description,
+  setDescription,
+  collectionId, // Added from parent
+  setCollectionId,
+}: {
+  id: string;
+  setDescription: Dispatch<SetStateAction<string>>;
+  description: string;
+  collectionId: string; // Added typing for the prop
+  setCollectionId: Dispatch<SetStateAction<string>>;
+}) {
+  const { collections, createCollection } = usePersistentAppStore();
+
   return (
     <Section title="">
       <LabeledContent label="Select a collection">
@@ -180,7 +181,13 @@ export default function ColectionSection() {
                 },
                 {
                   text: "OK",
-                  onPress: (username: any) => setName(username),
+                  onPress: (text: string | undefined) => {
+                    if (text && text.trim().length > 0) {
+                      const newId = createCollection(text.trim());
+                      // Updates the parent state directly!
+                      setCollectionId(newId);
+                    }
+                  },
                 },
               ],
               "plain-text",
@@ -195,33 +202,49 @@ export default function ColectionSection() {
         />
       </LabeledContent>
 
-      <ScrollView axes="horizontal" showsIndicators={true}>
-        <HStack
-          spacing={16}
-          modifiers={[padding({ horizontal: 16, vertical: 10 })]}
-        >
-          {CATEGORIES.map((category) => (
-            <NativeCategoryCard
-              key={category.id}
-              category={category}
-              isSelected={category.id === name}
-              onSelect={() => {
-                setName(category.id);
-              }}
+      {collections.length > 0 ? (
+        <>
+          <ScrollView axes="horizontal" showsIndicators={true}>
+            <HStack
+              spacing={16}
+              modifiers={[padding({ horizontal: 16, vertical: 10 })]}
+            >
+              {collections.map((collection, index) => {
+                const mappedCategory = {
+                  id: collection.id,
+                  name: collection.name,
+                  count: collection.nodes.length,
+                  color: COLORS[index % COLORS.length],
+                };
+
+                return (
+                  <NativeCategoryCard
+                    key={collection.id}
+                    category={mappedCategory}
+                    // Check against the parent's collectionId state
+                    isSelected={collection.id === collectionId}
+                    onSelect={() => {
+                      setCollectionId(collection.id);
+                    }}
+                  />
+                );
+              })}
+            </HStack>
+          </ScrollView>
+          <LabeledContent label="Description">
+            <TextField
+              placeholder="(Optional)"
+              autocorrection
+              defaultValue={description}
+              onChangeText={(text) => setDescription(text)}
+              multiline={false}
+              allowNewlines={false}
             />
-          ))}
-        </HStack>
-      </ScrollView>
-      <LabeledContent label="Description">
-        <TextField
-          placeholder="(Optional)"
-          autocorrection
-          defaultValue={description}
-          onChangeText={(text) => setDescription(text)}
-          multiline={false}
-          allowNewlines={false}
-        />
-      </LabeledContent>
+          </LabeledContent>
+        </>
+      ) : (
+        <></>
+      )}
     </Section>
   );
 }

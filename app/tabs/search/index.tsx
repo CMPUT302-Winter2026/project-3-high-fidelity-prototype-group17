@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router"; // Added router
 import { useTranslation } from "react-i18next";
-import { RAW_NODES } from "@/utils/data";
+import { RAW_NODES, ROOT_IDS } from "@/utils/data";
 import {
   Host,
   List,
@@ -19,14 +19,38 @@ import {
   buttonStyle,
   labelStyle,
   controlSize,
+  disabled,
 } from "@expo/ui/swift-ui/modifiers";
 import { usePersistentAppStore } from "@/store/global-persistent";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { useColorScheme } from "react-native";
 
+const findCategoryRoot = (nodeId: string) => {
+  // If the node IS a root, return it immediately
+  if (ROOT_IDS.includes(nodeId)) return nodeId;
+
+  // Create a map to look up parents: ChildID -> ParentID
+  const parentMap = new Map<string, string>();
+  RAW_NODES.forEach((node) => {
+    node.children?.forEach((childId) => {
+      parentMap.set(childId, node.id);
+    });
+  });
+
+  let currentId = nodeId;
+  // Climb up the tree until we find one of our ROOT_IDS
+  while (currentId && !ROOT_IDS.includes(currentId)) {
+    const parentId = parentMap.get(currentId);
+    if (!parentId) break; // Safety break if tree is disconnected
+    currentId = parentId;
+  }
+
+  return currentId || nodeId; // Fallback to itself if no root found
+};
 export default function SearchIndex() {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
+  const { collections } = usePersistentAppStore(); // Get collections from store
 
   const rawTheme = useColorScheme();
   const theme = rawTheme === "dark" ? "dark" : "light";
@@ -34,7 +58,6 @@ export default function SearchIndex() {
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
 
-  const { setLng, lng, mode, setMode } = usePersistentAppStore();
   const filteredNodes = useMemo(() => {
     if (!searchQuery) return RAW_NODES;
 
@@ -72,6 +95,11 @@ export default function SearchIndex() {
             const meaning =
               node.sentences?.[0]?.setence || "No meaning available";
 
+            // 1. Find if this node is in ANY collection
+            const parentCollection = collections.find((col) =>
+              col.nodes.some((n) => n.id === node.id),
+            );
+
             return (
               <HStack key={node.id} alignment="center">
                 <VStack alignment="leading" spacing={4}>
@@ -88,6 +116,7 @@ export default function SearchIndex() {
                 <Spacer />
 
                 <HStack spacing={16}>
+                  {/* CATEGORY BUTTON */}
                   <Button
                     systemImage="folder.fill"
                     label="Category"
@@ -96,17 +125,36 @@ export default function SearchIndex() {
                       controlSize("regular"),
                       buttonStyle("glass"),
                     ]}
-                    onPress={() => console.log("Show Category: ", node.id)}
+                    onPress={() => {
+                      const rootId = findCategoryRoot(node.id);
+                      router.push({
+                        pathname: "/tabs/categories/[id]",
+                        params: { id: rootId },
+                      });
+                    }}
                   />
+
+                  {/* COLLECTION BUTTON */}
                   <Button
-                    systemImage="bookmark.fill"
+                    systemImage={
+                      parentCollection ? "bookmark.fill" : "bookmark"
+                    }
                     label="Collection"
+                    // 2. Disable button if no parent collection is found
                     modifiers={[
                       labelStyle("iconOnly"),
                       controlSize("regular"),
                       buttonStyle("glassProminent"),
+                      disabled(!parentCollection),
                     ]}
-                    onPress={() => console.log("Show Collection: ", node.id)}
+                    onPress={() => {
+                      if (parentCollection) {
+                        router.push({
+                          pathname: "/tabs/collections/[id]",
+                          params: { id: parentCollection.id },
+                        });
+                      }
+                    }}
                   />
                 </HStack>
               </HStack>

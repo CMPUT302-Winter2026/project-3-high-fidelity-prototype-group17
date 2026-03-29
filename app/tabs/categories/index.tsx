@@ -1,6 +1,7 @@
 import { Link, router } from "expo-router";
 import { memo } from "react";
-import { FlatList } from "react-native-gesture-handler";
+// 1. IMPORT FROM REACT NATIVE, NOT GESTURE HANDLER
+import { FlatList, View } from "react-native";
 
 import LiquidCategoryCard from "@/components/liquid-category-card";
 import { PressableScale } from "pressto";
@@ -21,6 +22,7 @@ const Images = memo(() => {
       columnWrapperStyle={{ gap: 12 }}
       style={{ flex: 1, backgroundColor: "transparent" }}
       scrollEnabled={true}
+      contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{
         paddingVertical: 12,
         paddingHorizontal: 12,
@@ -35,9 +37,6 @@ const Images = memo(() => {
             style={{
               flex: 1,
               aspectRatio: 1,
-              // borderRadius: 24,
-              // overflow: "visible",
-              // backgroundColor: "#eee",
             }}
             onPress={() => {
               router.push({

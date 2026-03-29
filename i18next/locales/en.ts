@@ -1,7 +1,37 @@
 const en = {
   animals: "Animals",
   WORD_DOG_ROOT: "Acimosis",
+  // --- DOG (acimosis) ---
+  WORD_DOG_SG: "acimosis",
+  WORD_DOG_PL: "acimosisak",
+  WORD_DOG_OBV: "acimosisas",
 
+  // Possession Rows
+  WORD_DOG_POSS_1S_SG: "nitacimosisim",
+  WORD_DOG_POSS_1S_PL: "nitacimosisimak",
+  WORD_DOG_POSS_1S_OBV: "nitacimosisima",
+
+  WORD_DOG_POSS_2S_SG: "kitacimosisim",
+  WORD_DOG_POSS_2S_PL: "kitacimosisimak",
+  WORD_DOG_POSS_2S_OBV: "kitacimosisima",
+
+  WORD_DOG_POSS_3S_OBV: "otacimosisima",
+
+  WORD_DOG_POSS_1P_SG: "nitacimosisiminân",
+  WORD_DOG_POSS_1P_PL: "nitacimosisiminânak",
+  WORD_DOG_POSS_1P_OBV: "nitacimosisiminâna",
+
+  WORD_DOG_POSS_21P_SG: "kitacimosisiminaw",
+  WORD_DOG_POSS_21P_PL: "kitacimosisiminawak",
+  WORD_DOG_POSS_21P_OBV: "kitacimosisiminawa",
+
+  WORD_DOG_POSS_2P_SG: "kitacimosisimiwâw",
+  WORD_DOG_POSS_2P_PL: "kitacimosisimiwâwak",
+  WORD_DOG_POSS_2P_OBV: "kitacimosisimiwâwa",
+
+  WORD_DOG_POSS_3P_OBV: "otacimosisimiwâwa",
+
+  WORD_DOG_POSS_4_OBV: "otacimosisimiyiwa",
   // --- MALE DOG (nâpêwatim) ---
   WORD_MALE_DOG_ROOT: "Nâpêwatim",
   WORD_MALE_DOG_SG: "nâpêwatim",

@@ -25,7 +25,7 @@ import SkiaGraphNode from "./skia-graph-nodes";
 import { hapticWithSequence } from "@/utils/haptics-with-seq";
 import { runOnJS } from "react-native-worklets";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, usePathname } from "expo-router";
 import { LayoutNode } from "@/utils/types";
 import { usePersistentAppStore } from "@/store/global-persistent";
 import { buildOrthogonalForestLayout } from "@/utils/default-layout-engine";
@@ -42,18 +42,28 @@ const PADDING = 300;
 export default function SkiaGraph({
   id,
   newNode,
+  collectionId,
 }: {
   id: string;
   newNode?: boolean;
+  collectionId?: string;
 }) {
-  const { mode } = usePersistentAppStore();
-  const { nodes, edges } = useMemo(
-    () =>
-      mode === "expert"
-        ? buildForestLayout(RAW_NODES, ROOT_IDS)
-        : buildOrthogonalForestLayout(RAW_NODES, [id]),
-    [mode],
-  );
+  const { mode, collections } = usePersistentAppStore();
+  const path = usePathname();
+  const { nodes, edges } = useMemo(() => {
+    if (collectionId) {
+      const collection = collections.find((c) => c.id === collectionId);
+      if (!collection || collection.nodes.length === 0)
+        return { nodes: [], edges: [] };
+
+      return buildForestLayout(collection.nodes, collection.rootIds);
+    }
+
+    return mode === "expert"
+      ? buildForestLayout(RAW_NODES, ROOT_IDS)
+      : buildOrthogonalForestLayout(RAW_NODES, [id]);
+  }, [mode, id, collectionId, collections]);
+
   const [hitNode, setHitNode] = useState<LayoutNode | null>(null);
 
   const { top } = useSafeAreaInsets();
@@ -228,6 +238,7 @@ export default function SkiaGraph({
       pathname: "/bottom-sheet",
       params: {
         id: hitNode?.id ?? null,
+        hideNext: path.includes("/tabs/collections/") ? "true" : "false",
       },
     });
 

@@ -1,116 +1,82 @@
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { memo } from "react";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList } from "react-native";
 
-import LiquidCategoryCard from "@/components/liquid-category-card";
 import { PressableScale } from "pressto";
-import Page from "@/components/page";
 import LiquidCollectionCard from "@/components/liquid-collection-card";
+import { usePersistentAppStore } from "@/store/global-persistent";
+import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
+import { View } from "react-native";
 
 const Images = memo(() => {
-  const data = [
-    {
-      id: "1",
-      source: "https://picsum.photos/id/63/3000/2000",
-      placeholder: "LwLSuiW;i_S2|xS2SLWp#TS2XRoL",
-    },
-    {
-      id: "2",
-      source: "https://picsum.photos/id/429/3000/2000",
-      placeholder: "LRLNPtrV_MDOml.8.SDiM_kCRO%#",
-    },
-    {
-      id: "3",
-      source: "https://picsum.photos/id/326/3000/2000",
-      placeholder:
-        "|NDJ;PfQ~qofayj[fQj[fQf6ayfQfQj[fQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "4",
-      source: "https://picsum.photos/id/431/3000/2000",
-      placeholder:
-        "|NECwTfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "5",
-      source: "https://picsum.photos/id/493/3000/2000",
-      placeholder:
-        "|MFF%?fQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-    {
-      id: "6",
-      source: "https://picsum.photos/id/766/3000/2000",
-      placeholder:
-        "|MHBXpfQ~qj[ofj[fQj[fQf6ayfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
-    },
-  ];
+  const collections = usePersistentAppStore((state) => state.collections);
+  if (collections.length > 0) {
+    return (
+      <FlatList
+        data={collections}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        columnWrapperStyle={{ gap: 12 }}
+        style={{ flex: 1, backgroundColor: "transparent" }}
+        scrollEnabled={true}
+        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{
+          paddingVertical: 12,
+          paddingHorizontal: 12,
+          gap: 12,
+          backgroundColor: "transparent",
+        }}
+        renderItem={({ item }) => {
+          const nodeImages = item.nodes
+            .map((node) => node.images)
+            .filter(Boolean)
+            .slice(0, 5);
 
+          return (
+            <PressableScale
+              onLongPress={() =>
+                router.push({
+                  pathname: "/delete-warning",
+                  params: {
+                    id: item.id,
+                  },
+                })
+              }
+              style={{
+                flex: 1,
+                aspectRatio: 1,
+              }}
+              onPress={() => {
+                router.push({
+                  pathname: "/tabs/collections/[id]",
+                  params: {
+                    id: item.id,
+                  },
+                });
+              }}
+            >
+              {/* 3. Pass the dynamic data to your card */}
+              <LiquidCollectionCard
+                name={item.name}
+                numNodes={item.nodes.length}
+                images={nodeImages}
+              />
+            </PressableScale>
+          );
+        }}
+      />
+    );
+  }
   return (
-    <FlatList
-      data={data}
-      keyExtractor={(_, idx) => String(idx)}
-      numColumns={2}
-      columnWrapperStyle={{ gap: 12 }}
-      style={{ flex: 1, backgroundColor: "transparent" }}
-      scrollEnabled={true}
-      contentContainerStyle={{
-        paddingVertical: 12,
-        paddingHorizontal: 12,
-        gap: 12,
-        backgroundColor: "transparent",
-      }}
-      renderItem={({ item }) => {
-        const id = `shared-image-${item.id}`;
-        return (
-          <PressableScale
-            onLongPress={() => router.navigate("/delete-warning")}
-            style={{
-              flex: 1,
-              aspectRatio: 1,
-              // borderRadius: 24,
-              // overflow: "visible",
-              // backgroundColor: "#eee",
-            }}
-            onPress={() => {
-              router.push({
-                pathname: "/tabs/collections/[id]",
-                params: {
-                  id,
-                  image: item.source,
-                  placeholder: item.placeholder,
-                },
-              });
-            }}
-          >
-            <LiquidCollectionCard numImages={5} notifications />
-          </PressableScale>
-        );
-      }}
-    />
+    <View style={{ flex: 1 }}>
+      <Host style={{ flex: 1 }}>
+        <ContentUnavailableView
+          title="No Collections"
+          systemImage="folder.badge.questionmark"
+          description="Create a new collection to start organizing your nodes and images."
+        />
+      </Host>
+    </View>
   );
 });
 

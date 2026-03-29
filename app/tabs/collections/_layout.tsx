@@ -1,7 +1,7 @@
 import { useAnimationStore } from "@/store/global";
 import { SPRING_CONFIG } from "@/utils/constants";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
-import { router, Stack } from "expo-router";
+import { router, Stack, usePathname } from "expo-router";
 import { Share, useColorScheme, View } from "react-native";
 import { LogBox } from "react-native";
 import { withSpring } from "react-native-reanimated";
@@ -27,7 +27,8 @@ export default function StyleIdLayout() {
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
 
-  const { setLng, lng, mode, setMode } = usePersistentAppStore();
+  const { setLng, lng, mode, setMode, collections } = usePersistentAppStore();
+  const path = usePathname();
 
   return (
     <Stack>
@@ -254,7 +255,12 @@ export default function StyleIdLayout() {
                     type: "action",
                     label: "Create lesson plan",
                     onPress: () => {
-                      router.push("/tabs/collections/lesson-plan");
+                      const a = path.split("/").filter(Boolean);
+                      const collectionsId = a[a.length - 1];
+                      router.navigate({
+                        pathname: "/tabs/collections/lesson-plan",
+                        params: { collectionsId },
+                      });
                     },
                     icon: {
                       name: "doc.badge.plus",
