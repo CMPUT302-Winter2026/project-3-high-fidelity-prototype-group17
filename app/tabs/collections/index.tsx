@@ -1,19 +1,31 @@
 import { router } from "expo-router";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { FlatList } from "react-native";
 
 import { PressableScale } from "pressto";
 import LiquidCollectionCard from "@/components/liquid-collection-card";
-import { usePersistentAppStore } from "@/store/global-persistent";
+import { Collection, usePersistentAppStore } from "@/store/global-persistent";
 import { ContentUnavailableView, Host } from "@expo/ui/swift-ui";
 import { View } from "react-native";
 
 const Images = memo(() => {
   const collections = usePersistentAppStore((state) => state.collections);
+  const { sortMode } = usePersistentAppStore();
+
+  const sorted = useMemo(() => {
+    return [...collections].sort((a, b) =>
+      sortMode === "alphabetical"
+        ? a.name.localeCompare(b.name)
+        : (b.lastUpdated ?? 0) - (a.lastUpdated ?? 0),
+    );
+  }, [collections, sortMode]);
+
+  const hasNotification = (col: Collection) =>
+    (col.lastUpdated ?? 0) > (col.lastOpenedAt ?? 0);
   if (collections.length > 0) {
     return (
       <FlatList
-        data={collections}
+        data={sorted}
         keyExtractor={(item) => item.id}
         numColumns={2}
         columnWrapperStyle={{ gap: 12 }}
@@ -34,14 +46,14 @@ const Images = memo(() => {
 
           return (
             <PressableScale
-              onLongPress={() =>
+              onLongPress={() => {
                 router.push({
                   pathname: "/delete-warning",
                   params: {
                     id: item.id,
                   },
-                })
-              }
+                });
+              }}
               style={{
                 flex: 1,
                 aspectRatio: 1,
@@ -60,6 +72,7 @@ const Images = memo(() => {
                 name={item.name}
                 numNodes={item.nodes.length}
                 images={nodeImages}
+                notifications={hasNotification(item)}
               />
             </PressableScale>
           );

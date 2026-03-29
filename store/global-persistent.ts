@@ -23,6 +23,8 @@ export type Collection = {
   name: string;
   nodes: CollectedNode[];
   rootIds: string[];
+  lastUpdated: number;
+  lastOpenedAt: number;
 };
 
 interface GlobalAppState {
@@ -45,11 +47,35 @@ interface GlobalAppState {
   customChildOverrides: Record<string, string[]>;
   addNodeToGraph: (parentId: string, nodeData: Partial<RawNode>) => void;
   resetAll: () => void;
+  lastOpenedIds: string[];
+  markCategoryOpened: (id: string) => void;
+  sortMode: "alphabetical" | "recent";
+  setSortMode: (e: "alphabetical" | "recent") => void;
+  markCollectionOpened: (id: string) => void;
 }
 
 export const usePersistentAppStore = create<GlobalAppState>()(
   persist(
     (set) => ({
+      lastOpenedIds: [],
+
+      markCategoryOpened: (id) =>
+        set((state) => ({
+          lastOpenedIds: [
+            id,
+            ...state.lastOpenedIds.filter((i) => i !== id), // move to front, no dupes
+          ],
+        })),
+      sortMode: "alphabetical",
+
+      setSortMode: (e) => set({ sortMode: e }),
+
+      markCollectionOpened: (id) =>
+        set((state) => ({
+          collections: state.collections.map((c) =>
+            c.id === id ? { ...c, lastOpenedAt: Date.now() } : c,
+          ),
+        })),
       mode: "learner",
       lng: "en",
       customChildOverrides: {},
@@ -69,7 +95,14 @@ export const usePersistentAppStore = create<GlobalAppState>()(
         set((state) => ({
           collections: [
             ...state.collections,
-            { id: newId, name, nodes: [], rootIds: [] },
+            {
+              id: newId,
+              name,
+              nodes: [],
+              rootIds: [],
+              lastUpdated: Date.now(),
+              lastOpenedAt: Date.now(),
+            },
           ],
         }));
 
@@ -135,7 +168,12 @@ export const usePersistentAppStore = create<GlobalAppState>()(
               .filter((n) => !childIdsInCollection.has(n.id))
               .map((n) => n.id);
 
-            return { ...col, nodes: updatedNodes, rootIds: updatedRootIds };
+            return {
+              ...col,
+              nodes: updatedNodes,
+              rootIds: updatedRootIds,
+              lastUpdated: Date.now(),
+            };
           }),
         })),
 

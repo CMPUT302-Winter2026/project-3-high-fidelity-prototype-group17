@@ -23,11 +23,12 @@ export default function StyleIdLayout() {
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
 
-  const { setLng, lng, mode, setMode } = usePersistentAppStore();
-
+  const { setLng, lng, mode, setMode, sortMode, setSortMode } =
+    usePersistentAppStore();
   return (
     <Stack>
       <Stack.Screen
+        key={sortMode + lng + mode}
         name="index"
         options={{
           headerLargeTitle: mode !== "expert",
@@ -158,7 +159,8 @@ export default function StyleIdLayout() {
                             {
                               type: "action",
                               label: "Alphabetical (A-Z)",
-                              onPress: () => {},
+                              state: sortMode === "alphabetical" ? "on" : "off",
+                              onPress: () => setSortMode("alphabetical"),
                               icon: {
                                 name: "character.cursor.ibeam",
                                 type: "sfSymbol",
@@ -169,7 +171,8 @@ export default function StyleIdLayout() {
                               label: "Most Recent",
                               description:
                                 "See recently researched words first.",
-                              onPress: () => {},
+                              onPress: () => setSortMode("recent"),
+                              state: sortMode === "recent" ? "on" : "off",
                               icon: { name: "clock", type: "sfSymbol" },
                             },
                           ],
