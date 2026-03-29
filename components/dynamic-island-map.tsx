@@ -172,11 +172,7 @@ const MiniMap = ({
     );
   }, [showMiniMapProg]);
 
-  const mapOpacity = useSharedValue(0);
-
-  useEffect(() => {
-    mapOpacity.value = withDelay(500, withTiming(1, { duration: 300 }));
-  }, []);
+  const mapOpacity = useSharedValue(1);
 
   return (
     <Group

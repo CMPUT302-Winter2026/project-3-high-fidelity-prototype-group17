@@ -12,6 +12,7 @@ import {
   clamp,
   useDerivedValue,
   useSharedValue,
+  withDelay,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -107,12 +108,13 @@ export default function SkiaGraph({
   const lastY = useSharedValue(SCREEN_HEIGHT / 2);
   const scale = useSharedValue(1);
   const { showMiniMapProg } = useAnimationStore();
-
   useFocusEffect(
     useCallback(() => {
-      showMiniMapProg.set(withSpring(0, SPRING_CONFIG));
+      showMiniMapProg.value = 1;
+      showMiniMapProg.value = withDelay(100, withSpring(0, SPRING_CONFIG));
+
       return () => {
-        showMiniMapProg.set(withSpring(1, SPRING_CONFIG));
+        showMiniMapProg.value = withSpring(1, SPRING_CONFIG);
       };
     }, []),
   );
