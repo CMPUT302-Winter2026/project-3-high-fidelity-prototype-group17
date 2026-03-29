@@ -8,6 +8,7 @@ import {
   Divider,
   Button,
   Popover,
+  RNHostView,
 } from "@expo/ui/swift-ui";
 import {
   buttonStyle,
@@ -20,9 +21,10 @@ import {
   offset,
   padding,
 } from "@expo/ui/swift-ui/modifiers";
+import { Image } from "expo-image";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dimensions } from "react-native";
+import { Dimensions, View } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -154,19 +156,28 @@ export default function WordInfoSection({ id }: { id: string }) {
             </HStack>
           )}
         </VStack>
-
-        <VStack spacing={10} alignment="leading">
-          {/* Dynamically map over the definitions array */}
-          {definitions.map((def, index: number) => (
-            <DefinitionRow
-              key={`def-${index}`}
-              index={index + 1}
-              text={def.setence}
-              tagLabel="View example"
-              tagDesc={def.example}
-            />
-          ))}
-        </VStack>
+        <HStack alignment="top" spacing={16}>
+          <RNHostView matchContents>
+            <View style={{ width: 100, height: 100 }}>
+              <Image
+                source={data.images}
+                style={{ width: 100, height: 100, borderRadius: 12 }}
+              />
+            </View>
+          </RNHostView>
+          <VStack spacing={10} alignment="leading">
+            {/* Dynamically map over the definitions array */}
+            {definitions.map((def, index: number) => (
+              <DefinitionRow
+                key={`def-${index}`}
+                index={index + 1}
+                text={def.setence}
+                tagLabel="View example"
+                tagDesc={def.example}
+              />
+            ))}
+          </VStack>
+        </HStack>
       </VStack>
     </Section>
   );

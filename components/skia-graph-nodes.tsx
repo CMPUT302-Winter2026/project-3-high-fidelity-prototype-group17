@@ -91,6 +91,8 @@ const SkiaGraphNode = ({
   const { t } = useTranslation();
   const label = t(node.nls_key);
 
+  const meaning = node.sentences?.[0]?.setence || "";
+
   // 1. Pick the correct font for this node
   const currentFont =
     lng === "cr"
@@ -106,28 +108,40 @@ const SkiaGraphNode = ({
   const textWidth = currentFont ? currentFont.measureText(label).width : 0;
   const textHeight = currentFont ? currentFont.measureText(label).height : 0;
 
-  // 3. APPLY PADDING: Add padding to both sides of the text
-  const paddedTextWidth = textWidth + PADDING_X * 2;
-  const paddedTextHeight = textHeight + PADDING_Y * 2;
+  const meaningWidth =
+    currentNewFont && meaning ? currentNewFont.measureText(meaning).width : 0;
+  const meaningHeight =
+    currentNewFont && meaning ? currentNewFont.measureText(meaning).height : 0;
 
-  // 4. The actual box size should be whichever is bigger: the hardcoded layout size OR the padded text
-  //   const boxWidth = Math.max(node.width, paddedTextWidth);
-  //   const boxHeight = Math.max(node.height, paddedTextHeight);
+  // 3. Calculate compound text block dimensions
+  const maxTextWidth = Math.max(textWidth, meaningWidth);
+  const totalTextHeight = textHeight + (meaning ? meaningHeight + 4 : 0); // 4px gap
+
+  // 4. APPLY PADDING
+  const paddedTextWidth = maxTextWidth + PADDING_X * 2;
+  const paddedTextHeight = totalTextHeight + PADDING_Y * 2;
 
   const boxWidth = paddedTextWidth;
   const boxHeight = paddedTextHeight;
 
-  // 5. Find the center point of the layout engine's intended position
+  // 5. Find the center point
   const centerX = node.isRoot
     ? node.x + node.width / 2 + textHeight
     : node.x + node.width / 2;
   const centerY = node.y + node.height / 2;
 
-  // 6. Shift the new dynamic box so it stays perfectly centered over the edge lines
+  // 6. Shift the new dynamic box
   const boxX = centerX - boxWidth / 2;
   const boxY = centerY - boxHeight / 2;
 
-  // 7. DYNAMIC WIDTH: Now the progress bar animates precisely to the new padded box width!
+  // Text Positions (Stacked vertically)
+  const labelX = centerX - textWidth / 2;
+  const labelY = centerY - totalTextHeight / 2 + textHeight - 3;
+
+  const meaningX = centerX - meaningWidth / 2;
+  const meaningY = labelY + meaningHeight + 4;
+
+  // 7. DYNAMIC WIDTH
   const dvwidth = useDerivedValue(() => {
     if (selectedNode.get() === node.id) {
       return interpolate(progress.value, [0, 1], [0, boxWidth]);
@@ -158,6 +172,24 @@ const SkiaGraphNode = ({
           y={boxY}
         />
 
+        {/* Added Base Text to ensure it's visible before the blue bar expands over it */}
+        <Text
+          font={currentFont}
+          x={labelX}
+          y={labelY}
+          text={label}
+          color="#111"
+        />
+        {meaning ? (
+          <Text
+            font={currentNewFont}
+            x={meaningX}
+            y={meaningY}
+            text={meaning}
+            color="#666"
+          />
+        ) : null}
+
         <Rect
           height={boxHeight}
           width={dvwidth}
@@ -168,12 +200,17 @@ const SkiaGraphNode = ({
 
         <Mask
           mask={
-            <Text
-              font={currentFont}
-              x={centerX - textWidth / 2}
-              y={centerY + textHeight / 2 - 3}
-              text={label}
-            />
+            <Group>
+              <Text font={currentFont} x={labelX} y={labelY} text={label} />
+              {meaning ? (
+                <Text
+                  font={currentNewFont}
+                  x={meaningX}
+                  y={meaningY}
+                  text={meaning}
+                />
+              ) : null}
+            </Group>
           }
           clip={false}
         >
