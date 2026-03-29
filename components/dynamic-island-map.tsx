@@ -68,23 +68,19 @@ const MiniMap = ({
   const preciseDots = useMemo(() => {
     if (skiaImages.length === 0 || contentBounds.width === 0) return [];
 
+    const effectiveWidth = Math.max(contentBounds.width, 500);
+    const effectiveHeight = Math.max(contentBounds.height, 500);
+
     return skiaImages.map((img) => {
-      const normX = (img.x - contentBounds.minX) / contentBounds.width;
-      const normY = (img.y - contentBounds.minY) / contentBounds.height;
+      const normX = (img.x - contentBounds.minX) / effectiveWidth;
+      const normY = (img.y - contentBounds.minY) / effectiveHeight;
 
       return {
-        x: MINIMAP_X + normX * MINIMAP_WIDTH,
-        y: MINIMAP_Y + normY * MINIMAP_HEIGHT,
+        x: MINIMAP_X + MAP_PAD + normX * DRAW_W,
+        y: MINIMAP_Y + MAP_PAD + normY * DRAW_H,
       };
     });
-  }, [
-    skiaImages,
-    contentBounds,
-    MINIMAP_X,
-    MINIMAP_HEIGHT,
-    MINIMAP_HEIGHT,
-    MINIMAP_Y,
-  ]);
+  }, [skiaImages, contentBounds, MINIMAP_Y]);
 
   const rectProps = useDerivedValue(() => {
     if (contentBounds.width === 0) return { x: 0, y: 0, width: 0, height: 0 };
@@ -233,7 +229,7 @@ const MiniMap = ({
             key={i}
             cx={e.x}
             cy={e.y}
-            r={0.75}
+            r={skiaImages.length < 25 ? 2 : 0.75}
             color="white"
             opacity={1}
           />

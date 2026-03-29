@@ -1,7 +1,9 @@
+import { usePersistentAppStore } from "@/store/global-persistent";
 import { SymbolView } from "expo-symbols";
 import { Text, View } from "react-native";
 
 export function GraphScreenHelper() {
+  const { mode } = usePersistentAppStore();
   return (
     <View
       style={{
@@ -26,7 +28,9 @@ export function GraphScreenHelper() {
             How to explore
           </Text>
           <Text className="text-sm -mt-1" style={{ fontFamily: "system" }}>
-            Press and hold any node to view its details.
+            {mode === "expert"
+              ? "Hold for node details and to add new nodes"
+              : "Press and hold any node to view its details."}
           </Text>
         </View>
       </View>
