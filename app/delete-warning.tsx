@@ -1,9 +1,12 @@
 import { usePersistentAppStore } from "@/store/global-persistent";
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { PressableScale } from "pressto";
-import { useCallback } from "react";
-import { Pressable, Text, useWindowDimensions, View } from "react-native";
-import Transition from "react-native-screen-transitions";
+import { Text, useWindowDimensions, View } from "react-native";
+import { useAnimatedReaction } from "react-native-reanimated";
+import Transition, {
+  useScreenAnimation,
+} from "react-native-screen-transitions";
+import { runOnJS } from "react-native-worklets";
 
 export default function DeleteWarning() {
   const { height } = useWindowDimensions();
@@ -13,12 +16,15 @@ export default function DeleteWarning() {
     id: string;
   }>();
 
-  useFocusEffect(
-    useCallback(() => {
-      return () => {
-        setToDeleteId(null);
-      };
-    }, []),
+  const animation = useScreenAnimation();
+
+  useAnimatedReaction(
+    () => animation.value.current.closing,
+    (isClosing, wasClosing) => {
+      if (isClosing === 1 && wasClosing === 0) {
+        runOnJS(setToDeleteId)(null);
+      }
+    },
   );
 
   const fifthHeight = height / 5;
