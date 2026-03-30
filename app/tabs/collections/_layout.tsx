@@ -27,7 +27,7 @@ export default function StyleIdLayout() {
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
 
-  const { setLng, lng, mode, setMode, sortMode, setSortMode } =
+  const { setLng, lng, mode, setMode, sortMode, setSortMode, toDeleteId } =
     usePersistentAppStore();
   const path = usePathname();
 
@@ -42,7 +42,7 @@ export default function StyleIdLayout() {
           headerTintColor: theme === "dark" ? "white" : "black",
           headerLargeStyle: { backgroundColor: "transparent" },
           headerBlurEffect: isGlassAvailable ? undefined : blurEffect,
-          title: "Collection",
+          title: toDeleteId === null ? "Collection" : "",
           unstable_headerLeftItems: (props) => [
             {
               type: "button",

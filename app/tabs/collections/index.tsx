@@ -10,7 +10,7 @@ import { View } from "react-native";
 
 const Images = memo(() => {
   const collections = usePersistentAppStore((state) => state.collections);
-  const { sortMode } = usePersistentAppStore();
+  const { sortMode, setToDeleteId } = usePersistentAppStore();
 
   const sorted = useMemo(() => {
     return [...collections].sort((a, b) =>
@@ -47,6 +47,7 @@ const Images = memo(() => {
           return (
             <PressableScale
               onLongPress={() => {
+                setToDeleteId(item.id);
                 router.push({
                   pathname: "/delete-warning",
                   params: {

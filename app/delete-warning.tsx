@@ -1,16 +1,25 @@
 import { usePersistentAppStore } from "@/store/global-persistent";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { PressableScale } from "pressto";
+import { useCallback } from "react";
 import { Pressable, Text, useWindowDimensions, View } from "react-native";
 import Transition from "react-native-screen-transitions";
 
 export default function DeleteWarning() {
   const { height } = useWindowDimensions();
 
-  const { deleteCollection } = usePersistentAppStore();
+  const { deleteCollection, setToDeleteId } = usePersistentAppStore();
   const { id } = useLocalSearchParams<{
     id: string;
   }>();
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        setToDeleteId(null);
+      };
+    }, []),
+  );
 
   const fifthHeight = height / 5;
   return (
@@ -57,6 +66,7 @@ export default function DeleteWarning() {
             <PressableScale
               onPress={() => {
                 deleteCollection(id);
+                setToDeleteId(null);
                 router.back();
               }}
               style={{
