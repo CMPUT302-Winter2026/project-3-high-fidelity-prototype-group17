@@ -142,9 +142,7 @@ const LiquidCategoryCard = ({ id }: { id: string }) => {
         />
       </View>
 
-      {/* Foreground Glass Overlay - EXACT ORIGINALS */}
       <GlassView
-        className="flex items-center justify-center"
         isInteractive
         style={{
           position: "absolute",
@@ -154,18 +152,51 @@ const LiquidCategoryCard = ({ id }: { id: string }) => {
           height: 80,
           borderRadius: 24,
           justifyContent: "center",
-          alignItems: "center",
-          padding: 20,
+          padding: 16,
         }}
       >
+        {/* Title */}
         <Text
-          className="font-light text-xl"
-          style={{ fontFamily: "Times New Roman" }}
+          style={{
+            fontFamily: "Times New Roman",
+            fontSize: 20,
+            fontWeight: "700",
+            color: "#000",
+            marginBottom: 3,
+          }}
+          numberOfLines={1}
+          adjustsFontSizeToFit
         >
           {t(rootData.nls_key)}
         </Text>
-        <View className="px-4 py-2 bg-gray-100 rounded-xl">
-          <Text className="text-gray-500">{nodesCount + 1} Nodes</Text>
+
+        {/* Subtitle + badge on same row */}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text
+            style={{ fontSize: 12, color: "#000", flex: 1, marginRight: 8 }}
+          >
+            {t(rootData.sentences[0].setence)}
+          </Text>
+
+          <View
+            style={{
+              backgroundColor: "rgba(0,0,0,0.12)",
+              borderRadius: 8,
+              paddingHorizontal: 8,
+              paddingVertical: 3,
+              flexShrink: 0,
+            }}
+          >
+            <Text style={{ fontSize: 12, color: "#000" }}>
+              {nodesCount + 1} Nodes
+            </Text>
+          </View>
         </View>
       </GlassView>
     </View>
