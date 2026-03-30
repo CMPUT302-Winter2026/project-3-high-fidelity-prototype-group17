@@ -159,7 +159,7 @@ const LiquidCategoryCard = ({ id }: { id: string }) => {
         <Text
           style={{
             fontFamily: "Times New Roman",
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: "700",
             color: "#000",
             marginBottom: 3,
@@ -179,7 +179,7 @@ const LiquidCategoryCard = ({ id }: { id: string }) => {
           }}
         >
           <Text
-            style={{ fontSize: 12, color: "#000", flex: 1, marginRight: 8 }}
+            style={{ fontSize: 16, color: "#000", flex: 1, marginRight: 8 }}
           >
             {t(rootData.sentences[0].setence)}
           </Text>
