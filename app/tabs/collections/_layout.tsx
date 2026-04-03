@@ -2,7 +2,7 @@ import { useAnimationStore } from "@/store/global";
 import { SPRING_CONFIG } from "@/utils/constants";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { router, Stack, usePathname } from "expo-router";
-import { Share, useColorScheme, View } from "react-native";
+import { Alert, Share, useColorScheme, View } from "react-native";
 import { LogBox } from "react-native";
 import { withSpring } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -27,8 +27,16 @@ export default function StyleIdLayout() {
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
 
-  const { setLng, lng, mode, setMode, sortMode, setSortMode, toDeleteId } =
-    usePersistentAppStore();
+  const {
+    setLng,
+    lng,
+    mode,
+    setMode,
+    sortMode,
+    setSortMode,
+    toDeleteId,
+    createCollection,
+  } = usePersistentAppStore();
   const path = usePathname();
 
   return (
@@ -67,6 +75,38 @@ export default function StyleIdLayout() {
               menu: {
                 title: "Explore Options",
                 items: [
+                  {
+                    state: mode === "learner" ? "on" : "off",
+                    type: "action",
+                    label: "New Collection",
+                    description: "Create a new collection.",
+                    onPress: () => {
+                      Alert.prompt(
+                        "Create Collection",
+                        `Please enter your new collection name!`,
+                        [
+                          {
+                            text: "Cancel",
+                            style: "cancel",
+                          },
+                          {
+                            text: "OK",
+                            onPress: (text: string | undefined) => {
+                              if (text && text.trim().length > 0) {
+                                createCollection(text.trim());
+                              }
+                            },
+                          },
+                        ],
+                        "plain-text",
+                        "",
+                      );
+                    },
+                    icon: {
+                      name: "plus",
+                      type: "sfSymbol",
+                    },
+                  },
                   {
                     type: "submenu",
                     label: "Switch Mode",
