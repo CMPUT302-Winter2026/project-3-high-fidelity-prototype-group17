@@ -36,6 +36,7 @@ export default function StyleIdLayout() {
     setSortMode,
     toDeleteId,
     createCollection,
+    resetAll,
   } = usePersistentAppStore();
   const path = usePathname();
 
@@ -73,8 +74,35 @@ export default function StyleIdLayout() {
               },
               label: "Options",
               menu: {
-                title: "Explore Options",
+                title: "Collection Options",
                 items: [
+                  {
+                    type: "action",
+                    destructive: true,
+                    label: "Reset",
+                    description: "Reset the app to default.",
+                    onPress: () => {
+                      Alert.alert(
+                        "Reset App",
+                        "Are you sure you want to reset the app state? This cannot be undone.",
+                        [
+                          {
+                            text: "Cancel",
+                            style: "cancel",
+                          },
+                          {
+                            text: "Reset",
+                            style: "destructive",
+                            onPress: () => resetAll(),
+                          },
+                        ],
+                      );
+                    },
+                    icon: {
+                      name: "arrow.counterclockwise",
+                      type: "sfSymbol",
+                    },
+                  },
                   {
                     state: mode === "learner" ? "on" : "off",
                     type: "action",

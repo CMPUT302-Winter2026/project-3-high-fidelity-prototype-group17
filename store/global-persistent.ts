@@ -27,6 +27,14 @@ export type Collection = {
   lastOpenedAt: number;
 };
 
+export type nodeClickTracking = Record<
+  string,
+  {
+    openCount: number;
+    isNew: boolean;
+  }
+>;
+
 interface GlobalAppState {
   mode: "learner" | "teacher" | "expert";
   setMode: (e: "learner" | "teacher" | "expert") => void;
@@ -52,13 +60,42 @@ interface GlobalAppState {
   sortMode: "alphabetical" | "recent";
   setSortMode: (e: "alphabetical" | "recent") => void;
   markCollectionOpened: (id: string) => void;
+
+  nodeClickTracking: nodeClickTracking;
+  setNodeClickTracking: (e: nodeClickTracking) => void;
+  removeNodeFromGraph: (nodeId: string) => void;
 }
 
 export const usePersistentAppStore = create<GlobalAppState>()(
   persist(
     (set) => ({
-      lastOpenedIds: [],
+      removeNodeFromGraph: (nodeId) =>
+        set((state) => {
+          const updatedCustom = state.customNodes.filter(
+            (n) => n.id !== nodeId,
+          );
+          const updatedCustomWithChildren = updatedCustom.map((n) => ({
+            ...n,
+            children: (n.children || []).filter((cid) => cid !== nodeId),
+          }));
+          // Remove from overrides
+          const updatedOverrides: Record<string, string[]> = {};
+          Object.entries(state.customChildOverrides).forEach(([k, v]) => {
+            updatedOverrides[k] = v.filter((id) => id !== nodeId);
+          });
+          delete updatedOverrides[nodeId];
 
+          return {
+            customNodes: updatedCustomWithChildren,
+            customChildOverrides: updatedOverrides,
+          };
+        }),
+      lastOpenedIds: [],
+      nodeClickTracking: { "-1": { isNew: false, openCount: 0 } },
+      setNodeClickTracking: (e) =>
+        set((state) => ({
+          nodeClickTracking: { ...state.nodeClickTracking, ...e },
+        })),
       markCategoryOpened: (id) =>
         set((state) => ({
           lastOpenedIds: [
@@ -114,8 +151,10 @@ export const usePersistentAppStore = create<GlobalAppState>()(
           collections: state.collections.filter((c) => c.id !== id),
         })),
       addNodeToCollection: (collectionId, primaryNode) =>
-        set((state) => ({
-          collections: state.collections.map((col) => {
+        set((state) => {
+          const newTrackingData: nodeClickTracking = {};
+
+          const updatedCollections = state.collections.map((col) => {
             if (col.id !== collectionId) return col;
 
             const now = Date.now();
@@ -129,6 +168,14 @@ export const usePersistentAppStore = create<GlobalAppState>()(
                   dateAdded: now,
                   description: primaryNode.description,
                 });
+
+                //  initialize tracking if it doesn't already exist globally
+                if (!state.nodeClickTracking[nodeToAdd.id]) {
+                  newTrackingData[nodeToAdd.id + ":" + collectionId] = {
+                    openCount: 0,
+                    isNew: true,
+                  };
+                }
               }
             };
 
@@ -174,9 +221,16 @@ export const usePersistentAppStore = create<GlobalAppState>()(
               rootIds: updatedRootIds,
               lastUpdated: Date.now(),
             };
-          }),
-        })),
+          });
 
+          return {
+            collections: updatedCollections,
+            nodeClickTracking: {
+              ...state.nodeClickTracking,
+              ...newTrackingData,
+            },
+          };
+        }),
       removeNodeFromCollection: (collectionId, nodeId) =>
         set((state) => ({
           collections: state.collections.map((col) => {
@@ -217,6 +271,9 @@ export const usePersistentAppStore = create<GlobalAppState>()(
           toDeleteId: null,
           customNodes: [],
           customChildOverrides: {},
+          lastOpenedIds: [],
+          sortMode: "alphabetical",
+          nodeClickTracking: { "-1": { isNew: false, openCount: 0 } },
         });
       },
 

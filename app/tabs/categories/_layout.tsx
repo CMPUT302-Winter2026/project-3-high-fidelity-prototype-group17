@@ -2,7 +2,7 @@ import { useAnimationStore } from "@/store/global";
 import { SPRING_CONFIG } from "@/utils/constants";
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { router, Stack } from "expo-router";
-import { Share, useColorScheme, View } from "react-native";
+import { Alert, Share, useColorScheme, View } from "react-native";
 import { LogBox } from "react-native";
 import { withSpring } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
@@ -23,12 +23,11 @@ export default function StyleIdLayout() {
   const blurEffect =
     theme === "dark" ? "systemMaterialDark" : "systemMaterialLight";
 
-  const { setLng, lng, mode, setMode, sortMode, setSortMode } =
+  const { setLng, lng, mode, setMode, sortMode, setSortMode, resetAll } =
     usePersistentAppStore();
   return (
     <Stack>
       <Stack.Screen
-        key={sortMode + lng + mode}
         name="index"
         options={{
           headerLargeTitle: mode !== "expert",
@@ -80,6 +79,34 @@ export default function StyleIdLayout() {
               menu: {
                 title: "Explore Options",
                 items: [
+                  {
+                    type: "action",
+                    state: "off",
+                    destructive: true,
+                    label: "Reset",
+                    description: "Reset the app state.",
+                    onPress: () => {
+                      Alert.alert(
+                        "Reset App",
+                        "Are you sure you want to reset the app state? This cannot be undone.",
+                        [
+                          {
+                            text: "Cancel",
+                            style: "cancel",
+                          },
+                          {
+                            text: "Reset",
+                            style: "destructive",
+                            onPress: () => resetAll(),
+                          },
+                        ],
+                      );
+                    },
+                    icon: {
+                      name: "arrow.counterclockwise",
+                      type: "sfSymbol",
+                    },
+                  },
                   ...(mode === "expert"
                     ? [
                         {

@@ -59,31 +59,33 @@ export default function SkiaGraph({
       nodeMap.set(n.id, { ...n, children: [...n.children] }),
     );
 
-    customNodes.forEach((cn) => {
-      nodeMap.set(cn.id, { ...cn, children: [...(cn.children || [])] });
-    });
+    if (mode === "expert") {
+      customNodes.forEach((cn) => {
+        nodeMap.set(cn.id, { ...cn, children: [...(cn.children || [])] });
+      });
 
-    customNodes.forEach((cn) => {
-      if (cn.parentId && nodeMap.has(cn.parentId)) {
-        const parent = nodeMap.get(cn.parentId)!;
-        if (!parent.children.includes(cn.id)) {
-          parent.children.push(cn.id);
+      customNodes.forEach((cn) => {
+        if (cn.parentId && nodeMap.has(cn.parentId)) {
+          const parent = nodeMap.get(cn.parentId)!;
+          if (!parent.children.includes(cn.id)) {
+            parent.children.push(cn.id);
+          }
         }
-      }
-    });
+      });
 
-    Object.entries(customChildOverrides).forEach(
-      ([parentId, extraChildren]) => {
-        if (nodeMap.has(parentId)) {
-          const parent = nodeMap.get(parentId)!;
-          extraChildren.forEach((childId) => {
-            if (!parent.children.includes(childId)) {
-              parent.children.push(childId);
-            }
-          });
-        }
-      },
-    );
+      Object.entries(customChildOverrides).forEach(
+        ([parentId, extraChildren]) => {
+          if (nodeMap.has(parentId)) {
+            const parent = nodeMap.get(parentId)!;
+            extraChildren.forEach((childId) => {
+              if (!parent.children.includes(childId)) {
+                parent.children.push(childId);
+              }
+            });
+          }
+        },
+      );
+    }
 
     const allNodes = Array.from(nodeMap.values());
 
@@ -445,7 +447,6 @@ export default function SkiaGraph({
           {nodes.map((node, idx) => {
             return (
               <SkiaGraphNode
-                newNode={newNode}
                 key={idx}
                 node={node}
                 selectedNode={longpressedNode}

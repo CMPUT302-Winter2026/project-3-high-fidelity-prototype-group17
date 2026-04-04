@@ -1,5 +1,5 @@
 import { Platform } from "react-native";
-import React from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   Group,
   Mask,
@@ -69,13 +69,11 @@ const PADDING_Y = 8;
 const SkiaGraphNode = ({
   progress,
   node,
-  newNode,
   selectedNode,
 }: {
   progress: SharedValue<number>;
   node: LayoutNode;
   selectedNode: SharedValue<string>;
-  newNode?: boolean;
 }) => {
   const creeFont = useFont(
     require("../assets/fonts/NotoSansCanadianAboriginal-VariableFont_wght.ttf"),
@@ -87,7 +85,48 @@ const SkiaGraphNode = ({
   );
   const path = usePathname();
 
-  const { lng, mode } = usePersistentAppStore();
+  const { lng, mode, nodeClickTracking, setNodeClickTracking } =
+    usePersistentAppStore();
+  const pathArr = path.split("/").filter(Boolean);
+  const collectionId = useMemo(() => {
+    let id = undefined;
+    if (pathArr.length === 3) {
+      if (pathArr[1] === "collections") {
+        id = pathArr[2];
+      }
+    }
+    return id;
+  }, [pathArr]);
+
+  const nodeTracking = useMemo(() => {
+    if (collectionId) {
+      const key = node.id + ":" + collectionId;
+      console.log(JSON.stringify({ key, nodeClickTracking }, null, 4));
+      return nodeClickTracking[key];
+    }
+    return undefined;
+  }, [nodeClickTracking, node, collectionId]);
+
+  const newNode = useMemo(
+    () => nodeTracking !== undefined && nodeTracking.isNew,
+    [nodeTracking],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (nodeTracking && nodeTracking.isNew && mode !== "learner") {
+        const key = node.id + ":" + collectionId;
+        const cnt = nodeTracking.openCount + 1;
+        setNodeClickTracking({
+          [key]: {
+            openCount: cnt,
+            isNew: cnt < 1,
+          },
+        });
+      }
+    };
+  }, [nodeTracking?.isNew, mode, collectionId]);
+
   const fill = depthColor(node.depth, DEPTH_COLORS);
   const stroke = depthColor(node.depth, DEPTH_STROKES);
 
@@ -166,7 +205,7 @@ const SkiaGraphNode = ({
           <Rect x={-1} y={-6} width={2} height={12} color="white" />
         </Group>
       )}
-      {newNode && (
+      {newNode && path.includes("/tabs/collections/") && (
         <Text
           font={currentNewFont}
           x={centerX - textWidth / 2 + textWidth + 5}

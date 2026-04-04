@@ -32,7 +32,8 @@ import { usePersistentAppStore } from "@/store/global-persistent";
 import { RAW_NODES } from "@/utils/data";
 import { useTranslation } from "react-i18next";
 export default function Screen() {
-  const { mode, addNodeToGraph, customNodes } = usePersistentAppStore();
+  const { mode, addNodeToGraph, customNodes, removeNodeFromGraph } =
+    usePersistentAppStore();
   const { id, hideNext } = useLocalSearchParams<{
     id: string;
     hideNext: string;
@@ -56,41 +57,76 @@ export default function Screen() {
             <WordInfoSection id={id} />
 
             {mode === "expert" && hideNext === "false" ? (
-              <Section title="Add Node">
-                <VStack spacing={12}>
-                  <Button
-                    onPress={() => {
-                      Alert.prompt(
-                        "Add Related Word",
-                        `Enter the name for the new word connected to ${t(data?.nls_key || "")}`,
-                        [
-                          {
-                            text: "Cancel",
-                            style: "cancel",
-                          },
-                          {
-                            text: "Add",
-                            onPress: (wordName: string | undefined) => {
-                              if (
-                                wordName &&
-                                wordName.trim().length > 0 &&
-                                data
-                              ) {
-                                addNodeToGraph(id, {
-                                  nls_key: wordName.trim(),
-                                });
-                              }
+              <>
+                <Section title="Add Node">
+                  <VStack spacing={12}>
+                    <Button
+                      onPress={() => {
+                        Alert.prompt(
+                          "Add Related Word",
+                          `Enter the name for the new word connected to ${t(data?.nls_key || "")}`,
+                          [
+                            {
+                              text: "Cancel",
+                              style: "cancel",
                             },
-                          },
-                        ],
-                        "plain-text",
-                      );
-                    }}
-                    label={`Connect a new node to ${t(data?.nls_key || "")}`}
-                    systemImage="plus"
-                  />
-                </VStack>
-              </Section>
+                            {
+                              text: "Add",
+                              onPress: (wordName: string | undefined) => {
+                                if (
+                                  wordName &&
+                                  wordName.trim().length > 0 &&
+                                  data
+                                ) {
+                                  addNodeToGraph(id, {
+                                    nls_key: wordName.trim(),
+                                  });
+                                }
+                              },
+                            },
+                          ],
+                          "plain-text",
+                        );
+                      }}
+                      label={`Connect a new node to ${t(data?.nls_key || "")}`}
+                      systemImage="plus"
+                    />
+                  </VStack>
+                </Section>
+                {data?.id.includes("custom") && (
+                  <Section title="Delete Node">
+                    <VStack spacing={12}>
+                      <Button
+                        modifiers={[
+                          foregroundStyle({ color: "red", type: "color" }),
+                        ]}
+                        onPress={() => {
+                          Alert.alert(
+                            "Delete Node",
+                            `Are you sure you want to delete "${t(data?.nls_key || "")}" from the graph?`,
+                            [
+                              { text: "Cancel", style: "cancel" },
+                              {
+                                text: "Delete",
+                                style: "destructive",
+                                onPress: () => {
+                                  if (data) {
+                                    removeNodeFromGraph(data.id);
+                                    router.back();
+                                  }
+                                },
+                              },
+                            ],
+                          );
+                        }}
+                        label={`Delete node - ${t(data?.nls_key || "")} from the graph`}
+                        systemImage="trash"
+                        role="destructive"
+                      />
+                    </VStack>
+                  </Section>
+                )}
+              </>
             ) : (
               <></>
             )}
