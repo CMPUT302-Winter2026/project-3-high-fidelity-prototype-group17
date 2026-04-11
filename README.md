@@ -39,6 +39,7 @@
 - NLS: https://www.youtube.com/watch?v=EWZZ-qekCW0
 - Reference Post: https://x.com/_iam_karthik/status/2026315389173723335
 - router and transitions: https://github.com/eds2002/react-native-screen-transitions
+- UNIWIND (TAILWIND) FOR RN: https://uniwind.dev/
 - Graph view (skia): https://mintlify.wiki/shopify/react-native-skia/images/pictures#advanced-patterns
 
 **AI Usage (Claude & Gemini):**
