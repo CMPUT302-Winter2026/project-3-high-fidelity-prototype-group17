@@ -37,7 +37,8 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const BG_COLOR = "#FFF";
 const EDGE_COLOR = "#88878055";
 // constrained padding
-const PADDING = 300;
+const PADDING_X = 300;
+const PADDING_Y = 400;
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function SkiaGraph({
@@ -137,10 +138,10 @@ export default function SkiaGraph({
     });
 
     return {
-      minX: minX - PADDING,
-      minY: minY - PADDING,
-      maxX: maxX + PADDING,
-      maxY: maxY + PADDING,
+      minX: minX - PADDING_X,
+      minY: minY - PADDING_Y,
+      maxX: maxX + PADDING_X,
+      maxY: maxY + PADDING_Y,
     };
   }, [nodes]);
 

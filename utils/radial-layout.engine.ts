@@ -239,11 +239,11 @@ export function buildForestLayout(nodes: RawNode[], rootIds: string[]) {
     currentRowMaxRadius = Math.max(currentRowMaxRadius, maxRadius);
 
     if (colIndex === 0) {
-      currentOffsetX += maxRadius * 2 + TREE_SPACING;
+      currentOffsetX += maxRadius * 1 + TREE_SPACING;
       colIndex = 1;
     } else {
       currentOffsetX = 0;
-      currentOffsetY += currentRowMaxRadius * 2 + TREE_SPACING;
+      currentOffsetY += currentRowMaxRadius * 1 + TREE_SPACING;
       currentRowMaxRadius = 0;
       colIndex = 0;
     }
